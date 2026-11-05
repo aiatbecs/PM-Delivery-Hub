@@ -1,8 +1,8 @@
 # PM Delivery Hub
 
-PM Delivery Hub is an AI-assisted project-management workspace built around Microsoft 365. The development environment contains the `PMDeliveryHub` solution, the Project table, and a published basic model-driven app with a Project form and Active Projects view. Synthetic record creation and required-field validation have been tested. The unmanaged milestone solution, version `1.0.0.1`, has been exported and unpacked into the local solution source. There is no meeting workflow or AI agent yet, and project-team access has not been implemented. See [docs/DATA-MODEL.md](docs/DATA-MODEL.md) for the implementation checkpoint.
+PM Delivery Hub is an AI-assisted project-management workspace built around Microsoft 365. The development environment contains the `PMDeliveryHub` solution, a published Project app, and a **Meeting Review** workflow: import Copilot JSON with evidence, edit/approve/reject proposals, apply approved summaries and actions/risks/issues/dependencies, and prepare downloadable minutes/email drafts. Synchronous Dataverse plugins enforce approval and provenance for RAID records. Synthetic end-to-end tests have passed. Project-team access and integrated AI are not yet enabled; use synthetic data only. See [docs/MEETING-WORKFLOW.md](docs/MEETING-WORKFLOW.md) for usage and limits.
 
-## Initial architecture
+## Target architecture
 
 - **Power Apps model-driven app** for project and delivery operations
 - **Dataverse** as the structured system of record
@@ -14,6 +14,8 @@ PM Delivery Hub is an AI-assisted project-management workspace built around Micr
 
 The first end-to-end workflow and its acceptance criteria are in [docs/MVP.md](docs/MVP.md). The initial Dataverse table proposal is in [docs/DATA-MODEL.md](docs/DATA-MODEL.md).
 
+The current increment uses model-driven app web resources, Dataverse transactions, and a signed sandbox plugin. The user runs extraction manually in their approved Microsoft 365 Copilot account. No paid AI API, Copilot Studio agent, Power Automate flow, SharePoint upload, or automatic email sending is configured.
+
 ## Repository layout
 
 This project lives inside the parent `aiatbecs` Git repository; it does not use a separate nested repository.
@@ -24,8 +26,17 @@ PM-Delivery-Hub/
   docs/
     MVP.md
     DATA-MODEL.md
+    MEETING-WORKFLOW.md
   PMDeliveryHub/
     PMDeliveryHub.cdsproj
+    workflow/
+      core.js
+      core.test.cjs
+      review.html
+      review.js
+      schema.mjs
+      serve-deployment.mjs
+      ApprovalGuard/
     src/
       Entities/
       AppModules/
@@ -60,7 +71,9 @@ The development work to date used the authenticated maker portal. Device-code CL
 
 ## Milestone backup and restore
 
-Version `1.0.0.1` was exported as an unmanaged solution and unpacked with `pac solution unpack`. Repacking the source with `pac solution pack` succeeded. A restore into a separate environment has not yet been tested.
+Version `1.0.0.2` backs up the working Meeting Review increment and was exported as an unmanaged solution and unpacked with `pac solution unpack`. The earlier `1.0.0.1` ZIP preserves the basic Project-only milestone. Repacking the source with `pac solution pack` succeeded. A restore into a separate environment has not yet been tested.
+
+The `1.0.0.2` export SHA-256 is `7A25B9475083403B290B5E49A701B9C9D526B7C6359340F24493DAD1BA2BFCE7`.
 
 From the solution directory, create an unmanaged package in an existing output directory:
 
@@ -77,6 +90,20 @@ Solution exports back up component definitions, not project rows, uploaded docum
 In the maker portal, select the approved development environment, open the `PMDeliveryHub` solution, and play the **PM Delivery Hub** model-driven app. Under **Delivery > Projects**, choose **New**, complete the required fields, and save. Project Number is generated automatically and is read-only on the main form.
 
 Use synthetic data only until project access and data-handling requirements are implemented. The app has not been shared with additional users. The Active Projects view uses Dataverse's Active status; selecting Completed or Cancelled/Archived in the custom Stage column does not automatically deactivate a project.
+
+For the new workflow, open **Delivery > Meeting Review**, select a project, and download or copy the extraction prompt. Process synthetic transcripts/screenshots in the approved Microsoft 365 Copilot account, paste its JSON back into the app, and review the proposals. Generic drafts also appear in a copyable preview if the browser blocks downloads. The app does not itself interpret screenshots or generate your corporate document templates.
+
+## Workflow source validation
+
+From the project directory:
+
+```powershell
+node --test .\PMDeliveryHub\workflow\core.test.cjs
+node --check .\PMDeliveryHub\workflow\review.js
+dotnet build .\PMDeliveryHub\workflow\ApprovalGuard\ApprovalGuard.csproj -c Release -p:PMDHSigningKey=<private-signing-key-path>
+```
+
+Keep the original signing key in approved private storage, outside Git. An imported solution contains the signed assembly, not its private signing key. Future assembly updates must retain the signing identity. The loopback deployment helper is a temporary local development utility, not a hosted application or an authentication workaround; stop it when deployment is finished.
 
 ## Delivery sequence
 

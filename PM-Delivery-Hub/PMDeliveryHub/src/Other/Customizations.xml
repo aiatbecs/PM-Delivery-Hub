@@ -9,7 +9,10 @@
   <EntityRelationships />
   <OrganizationSettings />
   <optionsets />
+  <WebResources />
   <CustomControls />
+  <SolutionPluginAssemblies />
+  <SdkMessageProcessingSteps />
   <AppModuleSiteMaps />
   <AppModules />
   <EntityDataProviders />

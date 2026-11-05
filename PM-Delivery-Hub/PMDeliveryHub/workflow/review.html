@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PM Delivery Hub - Meeting Review</title>
+  <style>
+    body{font:15px "Segoe UI",sans-serif;color:#172b4d;background:#f5f7fb;margin:0;padding:24px}
+    main{max-width:1100px;margin:auto}h1{font-size:26px}h2{font-size:20px}
+    section,article{background:white;border:1px solid #d8dfea;border-radius:8px;padding:18px;margin:16px 0}
+    label{display:block;margin:12px 0 5px;font-weight:600}select,textarea,input{box-sizing:border-box;width:100%;padding:9px;border:1px solid #8999ad;border-radius:4px}
+    textarea{font:13px Consolas,monospace;min-height:140px}button{background:#155eaa;color:white;border:0;border-radius:4px;padding:10px 14px;margin:8px 8px 0 0;cursor:pointer}
+    button:disabled{opacity:.5;cursor:wait}.danger{background:#9b2837}.notice{background:#fff4d3;padding:12px}
+    #message{white-space:pre-wrap;padding:12px;border-radius:4px}#message.error{background:#ffe2e2;color:#8a1024}
+    pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f4f6f9;padding:12px}small{display:block;color:#44556b}
+    .status{font-weight:600}.row{display:flex;gap:16px}.row>div{flex:1}a{color:#155eaa}
+  </style>
+</head>
+<body>
+<main>
+  <h1>Meeting Review</h1>
+  <p class="notice">Development workflow. Use synthetic data until project access is tested. No paid AI is called.
+    Copilot output is untrusted: review every proposal and its evidence. Email is never sent here.</p>
+  <div id="message" role="status" aria-live="polite"></div>
+  <section>
+    <label for="project">Project</label><select id="project"></select>
+    <button id="refresh">Refresh meetings</button>
+    <label for="meeting">Meeting</label><select id="meeting"></select>
+    <button id="load">Load proposals and records</button>
+  </section>
+  <section>
+    <h2>1. Process input in your approved Copilot account</h2>
+    <p>Supply the transcript and screenshots directly to Microsoft 365 Copilot. This page does not process images.
+      Retain the originals in your approved storage. Copilot should quote source evidence with timestamps or screenshot labels.</p>
+    <button id="prompt">Download extraction prompt</button>
+    <button id="example">Download JSON example</button>
+    <h2>2. Import proposals (not official records)</h2>
+    <label for="file">Copilot JSON file</label><input id="file" type="file" accept=".json,application/json">
+    <label for="json">Or paste JSON</label><textarea id="json" spellcheck="false"></textarea>
+    <button id="import">Validate and import</button>
+    <small>Maximum 50 proposals per import. Keep the same meeting sourceKey and candidate keys on retries.
+      A changed candidate with an existing key is an error; it is not silently overwritten.</small>
+  </section>
+  <section>
+    <h2>3. Review proposals</h2>
+    <p>Approve applies the displayed edited content in one transaction. Reject leaves official records unchanged.
+      Reviewed proposals are immutable; submit a new candidate for further changes.</p>
+    <div id="proposals"></div>
+  </section>
+  <section>
+    <h2>Approved meeting records</h2><div id="records"></div>
+    <button id="minutes">Download draft minutes (.md)</button>
+    <button id="email">Download follow-up draft (.eml)</button>
+    <small>Generic drafts, not your corporate templates. Nothing is uploaded to SharePoint or emailed automatically.</small>
+  </section>
+  <section>
+    <label for="output">Generated text / draft preview (copy if downloads are blocked)</label>
+    <textarea id="output" readonly spellcheck="false"></textarea>
+  </section>
+</main>
+<script src="pmdh_core.js?v=1.0.0.2"></script>
+<script src="pmdh_review.js?v=1.0.0.2"></script>
+</body>
+</html>

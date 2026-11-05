@@ -6,3 +6,7 @@
 
 # MSBuild Binary and Structured Log
 *.binlog
+
+**/bin/
+**/obj/
+*.snk

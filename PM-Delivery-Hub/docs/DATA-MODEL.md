@@ -8,7 +8,7 @@ The MVP covers project context and the meeting-to-reviewed-updates workflow. Tab
 
 ### Implementation checkpoint
 
-- The development solution `PMDeliveryHub` was created with version `1.0.0.0` and exported as unmanaged milestone version `1.0.0.1`.
+- The development solution `PMDeliveryHub` was created with version `1.0.0.0`. Unmanaged milestone `1.0.0.1` preserves the basic Project app; `1.0.0.2` includes the working Meeting Review increment.
 - The standard Project table has been created inside the solution with schema name `pmdh_Project` and User or team ownership.
 - Its primary text column is Project Name (`pmdh_ProjectName`), Business required, with the portal default maximum length of 850 characters.
 - The `account_id`, `TPID`, and `Wave_id` columns have been created and their saved settings verified: Single line of text, Text format, Business required, maximum 100 characters each. They store external identifiers, preserve leading zeros, and allow repeated values across projects.
@@ -18,7 +18,8 @@ The MVP covers project context and the meeting-to-reviewed-updates workflow. Tab
 - The Project main form (Information) has been saved and published with the business columns and Owner. Project Number is read-only on this form; this is a UI restriction, not an API immutability guarantee.
 - The basic PM Delivery Hub model-driven app has been saved and published inside the solution, with Delivery > Projects navigation.
 - Active Projects has been saved and published with Project Name, Created On, Project Number, Customer, Project Manager, Stage, Health, account_id, TPID, Wave_id, and Target End Date. Its Active-status filter is unchanged; custom Stage does not change Dataverse status.
-- SharePoint Location and the related tables have not been created. Access enforcement is still pending.
+- Meeting, Evidence, Proposal, Action, Risk, Issue, and Dependency have been created as standard user/team-owned tables. See the implemented workflow schema below; the later target design is not the exact deployed schema.
+- SharePoint Location and other target tables have not been created. Project-team access enforcement is still pending.
 - Access is intended for the assigned PM and project team, with portfolio administrators seeing all projects. Ownership alone does not enforce this: security roles and team/sharing behavior still need implementation and testing.
 - The environment solution has been exported and unpacked into the local solution source. Local repacking passed; importing into another environment has not been tested. The solution backup does not include the synthetic project row or other business data.
 
@@ -43,6 +44,23 @@ The MVP covers project context and the meeting-to-reviewed-updates workflow. Tab
 - Model internal and external people without requiring external stakeholders to be Dataverse users. Use a Dataverse user lookup for internal assignments where appropriate, plus name/email fields for external contacts.
 
 ## Tables
+
+### Implemented meeting workflow schema
+
+All seven new tables have required primary name `pmdh_name` (200 characters). All have required Project lookups; all except Meeting also have required Meeting lookups. Proposal and RAID records require Evidence; RAID records also require Proposal. Lookup deletion is restricted and ownership/share cascades are disabled. Row ownership does not automatically follow Project ownership.
+
+| Table | Deployed content |
+|---|---|
+| `pmdh_meeting` | SourceKey (required 100-character retry key), MeetingDate (UTC timestamp/User local display), Attendees (4,000), optional Transcript (100,000-character memo), approved Summary (10,000) |
+| `pmdh_evidence` | SourceName and Locator (required 200 each), Excerpt (required by guard, 10,000); source content/provenance immutable |
+| `pmdh_proposal` | CandidateKey (required 100), Kind (Summary/Action/Risk/Issue/Dependency), Payload (20,000-character JSON memo), ReviewStatus (Pending/Approved/Edited and Approved/Rejected), server-assigned ReviewedBy/ReviewedOn, AppliedId (36); reviewed rows immutable |
+| `pmdh_action`, `pmdh_risk`, `pmdh_issue`, `pmdh_dependency` | Description (10,000), ResponsibleParty (200), DueDate (Date only), Status (100-character text, initially Open), Impact/Response (4,000 each), Probability (100-character text); required Project/Meeting/Evidence/Proposal provenance |
+
+The active alternate keys are `pmdh_MeetingSource` (Project + SourceKey) and `pmdh_MeetingCandidate` (Meeting + CandidateKey). Official RAID record IDs equal their proposal IDs, preventing repeated application of the same candidate. An approved Summary updates Meeting Summary and Project Current Summary; the latter imposes a 2,000-character approval limit.
+
+This first increment deliberately uses optional transcript text in Dataverse and text responsible-party/status/probability fields rather than SharePoint URLs, user assignment, and agreed choice scales. Originals and screenshots remain in approved external storage; do not use customer data until storage, retention, auditing, and access are approved. Table audit flags do not enable environment auditing.
+
+### Target table design (not all deployed)
 
 ### Project — MVP
 

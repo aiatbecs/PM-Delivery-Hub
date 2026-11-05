@@ -8,6 +8,12 @@ Prove one useful, auditable workflow before building the full artifact factory:
 
 The AI proposes. A project manager reviews and approves. AI output must not silently become an official project record or send a communication.
 
+## Implemented development increment
+
+The Project app and manual-Copilot review workflow are deployed. Supported proposal types are **Summary, Action, Risk, Issue, Dependency**. Evidence-backed pending proposals are imported from JSON; approval applies edited content transactionally, rejection creates no official record, and reviewer/time are recorded server-side. Meeting minutes and follow-up email are generic local drafts with a copyable preview, not SharePoint artifacts or corporate templates.
+
+This is an increment toward the acceptance criteria below, not completion of the entire MVP. Stakeholders, decisions, prerequisites, scope changes, updates/matching of existing RAID items, SharePoint artifact registration, integrated AI, and tested project-team permissions remain outstanding. See [MEETING-WORKFLOW.md](MEETING-WORKFLOW.md) for current behavior and synthetic validation.
+
 ## Initial records
 
 All records are associated with a project. Keep structured information in Dataverse rather than burying it in a single project narrative.

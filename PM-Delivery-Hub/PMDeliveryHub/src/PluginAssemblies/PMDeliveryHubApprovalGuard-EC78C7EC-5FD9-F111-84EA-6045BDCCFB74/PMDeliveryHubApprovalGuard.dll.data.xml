@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PluginAssembly FullName="PMDeliveryHub.ApprovalGuard, Version=1.0.0.0, Culture=neutral, PublicKeyToken=0dd892a5c8f545ca" PluginAssemblyId="ec78c7ec-5fd9-f111-84ea-6045bdccfb74" CustomizationLevel="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <IsolationMode>2</IsolationMode>
+  <SourceType>0</SourceType>
+  <IntroducedVersion>1.0.0.1</IntroducedVersion>
+  <FileName>/PluginAssemblies/PMDeliveryHubApprovalGuard-EC78C7EC-5FD9-F111-84EA-6045BDCCFB74/PMDeliveryHubApprovalGuard.dll</FileName>
+  <PluginTypes>
+    <PluginType AssemblyQualifiedName="PMDeliveryHub.ApprovalGuard, PMDeliveryHub.ApprovalGuard, Version=1.0.0.0, Culture=neutral, PublicKeyToken=0dd892a5c8f545ca" PluginTypeId="635365f5-5fd9-f111-84ea-6045bdccfb74" Name="PMDeliveryHub.ApprovalGuard">
+      <FriendlyName>PM Delivery Hub approval and provenance guard</FriendlyName>
+    </PluginType>
+  </PluginTypes>
+</PluginAssembly>
