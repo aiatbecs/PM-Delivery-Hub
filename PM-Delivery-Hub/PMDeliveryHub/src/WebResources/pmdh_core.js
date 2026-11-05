@@ -53,7 +53,7 @@
       if (!KINDS.includes(p.type)) throw new Error(`Unsupported proposal type: ${p.type}`);
       object(p.evidence, 'evidence', ['sourceName', 'locator', 'excerpt']);
       return { key, type: p.type, payload: payload(p.payload), evidence: {
-        sourceName: string(p.evidence.sourceName, 'sourceName', 200),
+        sourceName: string(p.evidence.sourceName, 'sourceName', 400),
         locator: string(p.evidence.locator, 'locator', 200),
         excerpt: string(p.evidence.excerpt, 'excerpt', 10000)
       } };

@@ -39,6 +39,7 @@
     <label for="json">Or paste JSON</label><textarea id="json" spellcheck="false"></textarea>
     <button id="import">Validate and import</button>
     <small>Maximum 50 proposals per import. Keep the same meeting sourceKey and candidate keys on retries.
+      Keys accept letters, digits, hyphens and underscores only; no colons.
       A changed candidate with an existing key is an error; it is not silently overwritten.</small>
   </section>
   <section>
@@ -58,7 +59,7 @@
     <textarea id="output" readonly spellcheck="false"></textarea>
   </section>
 </main>
-<script src="pmdh_core.js?v=1.0.0.2"></script>
-<script src="pmdh_review.js?v=1.0.0.2"></script>
+<script src="pmdh_core.js?v=1.0.0.3"></script>
+<script src="pmdh_review.js?v=1.0.0.3"></script>
 </body>
 </html>

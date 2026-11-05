@@ -7,6 +7,7 @@
     $('message').textContent = text;
     $('message').className = error ? 'error' : '';
     $('message').setAttribute('role', error ? 'alert' : 'status');
+    if (error) $('message').scrollIntoView({ block: 'center' });
   }
   async function api(path, method = 'GET', body, headers = {}) {
     const response = await fetch(base + path, { method, headers: {
@@ -130,6 +131,7 @@
     message(`${state.proposals.length} proposals; ${state.records.length} approved RAID records.`);
   }
   async function importJson() {
+    if (!$('json').value.trim()) throw new Error('Paste Copilot JSON into "Or paste JSON", or load a JSON file, before importing. The generated-text preview is not an import field.');
     const parsed = PMDH.validate(JSON.parse($('json').value), project());
     const matches = await all(`${state.sets.Meeting}?$filter=_pmdh_project_value eq ${project()} and pmdh_sourcekey eq '${parsed.meeting.sourceKey}'`);
     if (matches.length > 1) throw new Error('Duplicate meeting source keys exist; resolve them before import.');
@@ -243,6 +245,7 @@ Return JSON only matching the example below. Use types Summary, Action, Risk, Is
 For unknown optional fields use null or empty text. Every candidate needs a minimal quoted excerpt and source locator.
 For screenshots use the filename plus visible region/page as locator. Flag ambiguities in description.
 Use stable meeting sourceKey and candidate keys on retries. Use the actual meeting date as UTC ISO text, or null.
+Keys may contain only letters, digits, hyphens and underscores. Do not put colons in sourceKey; e.g. meeting-2026-11-03T140000Z.
 Do not reuse the sample sourceKey or dates for a real meeting. Use this exact projectId: ${project()}.
 No output is approved until the PM explicitly reviews it.
 Example shape (synthetic data; replace meeting and proposals):

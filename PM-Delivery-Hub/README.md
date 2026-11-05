@@ -71,9 +71,10 @@ The development work to date used the authenticated maker portal. Device-code CL
 
 ## Milestone backup and restore
 
-Version `1.0.0.2` backs up the working Meeting Review increment and was exported as an unmanaged solution and unpacked with `pac solution unpack`. The earlier `1.0.0.1` ZIP preserves the basic Project-only milestone. Repacking the source with `pac solution pack` succeeded. A restore into a separate environment has not yet been tested.
+Version `1.0.0.3` includes the Meeting Review import fixes: 400-character evidence filenames, visible validation errors, and key-format guidance. It was exported as an unmanaged solution and unpacked with `pac solution unpack`. The earlier `1.0.0.2` ZIP preserves the initial Meeting Review milestone; `1.0.0.1` preserves the basic Project-only milestone. Repacking the source with `pac solution pack` succeeded. A restore into a separate environment has not yet been tested.
 
 The `1.0.0.2` export SHA-256 is `7A25B9475083403B290B5E49A701B9C9D526B7C6359340F24493DAD1BA2BFCE7`.
+The `1.0.0.3` export SHA-256 is `929728EBACF0B13DD288CFBD2D84032A9220AEE6053B87C20B739CD2A555DFB1`.
 
 From the solution directory, create an unmanaged package in an existing output directory:
 

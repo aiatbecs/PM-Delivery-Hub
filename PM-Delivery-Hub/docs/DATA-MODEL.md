@@ -52,7 +52,7 @@ All seven new tables have required primary name `pmdh_name` (200 characters). Al
 | Table | Deployed content |
 |---|---|
 | `pmdh_meeting` | SourceKey (required 100-character retry key), MeetingDate (UTC timestamp/User local display), Attendees (4,000), optional Transcript (100,000-character memo), approved Summary (10,000) |
-| `pmdh_evidence` | SourceName and Locator (required 200 each), Excerpt (required by guard, 10,000); source content/provenance immutable |
+| `pmdh_evidence` | SourceName (required 400) and Locator (required 200), Excerpt (required by guard, 10,000); source content/provenance immutable |
 | `pmdh_proposal` | CandidateKey (required 100), Kind (Summary/Action/Risk/Issue/Dependency), Payload (20,000-character JSON memo), ReviewStatus (Pending/Approved/Edited and Approved/Rejected), server-assigned ReviewedBy/ReviewedOn, AppliedId (36); reviewed rows immutable |
 | `pmdh_action`, `pmdh_risk`, `pmdh_issue`, `pmdh_dependency` | Description (10,000), ResponsibleParty (200), DueDate (Date only), Status (100-character text, initially Open), Impact/Response (4,000 each), Probability (100-character text); required Project/Meeting/Evidence/Proposal provenance |
 

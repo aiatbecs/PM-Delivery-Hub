@@ -33,7 +33,7 @@ export const tables = [
     text('SourceKey', 'Source Key', 100, true)
   ]),
   table('Evidence', 'Evidence', 'Evidence', [
-    text('SourceName', 'Source Name', 200, true), text('Locator', 'Source Locator', 200, true),
+    text('SourceName', 'Source Name', 400, true), text('Locator', 'Source Locator', 200, true),
     memo('Excerpt', 'Supporting Excerpt', 10000)
   ]),
   table('Proposal', 'AI Proposal', 'AI Proposals', [

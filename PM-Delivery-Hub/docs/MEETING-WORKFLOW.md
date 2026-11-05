@@ -52,9 +52,12 @@ The in-app prompt and example contain the selected project's actual GUID. Replac
 
 - One to 50 proposals per import. Unknown fields/types, duplicate candidate keys, mismatched project IDs, missing evidence, overlong fields, and invalid dates are rejected.
 - Source and candidate keys accept only letters, digits, underscore, and hyphen, up to 100 characters. Keys are case-sensitive in client comparisons; use consistent casing.
+- Do not embed colon-separated timestamps in keys: use `meeting-2026-11-03T140000Z`, not `meeting-2026-11-03T14:00:00Z`. The separate meeting date still uses standard ISO timestamp colons.
+- Source filenames accept up to 400 characters; locators accept 200. The filename column capacity was increased after a live import exposed a storage-length mismatch. The complete filename is retained, not silently shortened.
 - Meeting date is optional UTC ISO text ending in `Z`; dueDate is an optional real `YYYY-MM-DD` date. Unknown optional values use null/empty text, never invented values.
 - Retry with the same sourceKey, candidate keys, meeting metadata, payload, and evidence. Identical existing candidates are skipped; changed existing content is an explicit error. After editing a candidate, the original unedited JSON no longer matches it.
 - Do not assign a new key solely to bypass deduplication. New keys represent genuinely new proposals. Duplicate-title warnings only compare records in the same meeting/type; cross-meeting fuzzy matching is not implemented.
+- Errors scroll into view at the top. Paste input into **Or paste JSON**, not the read-only generated-text preview. An empty import has an explicit instruction.
 - Reviewed proposals cannot be edited; new candidates are required for subsequent proposals. This increment creates new RAID records, not approved updates/merges to existing ones.
 
 ## Server and concurrency guarantees
@@ -82,6 +85,7 @@ Auditing must be enabled and retention configured at environment level. The revi
 - Change a Pending row after display: review UI refuses stale approval.
 - Validate output preview includes approved summary/records and pending count, excludes rejected/pending records, and has an unsent email header with no recipients.
 - Node validation tests cover exact proposal/text limits, real/leap dates, unknown fields, evidence, project matching, and multipart transaction errors. Signed plugin build and JavaScript syntax checks pass.
+- Import-fix increment: 11 Node tests pass, a synthetic 400-character source filename persists exactly, and empty JSON input displays an explicit visible error. A user-requested 13-proposal import was verified as entirely Pending with 13 evidence rows and complete source filenames; no approvals were performed.
 
 Temporary cross-project test data was deleted. The clearly labeled synthetic demonstration project/meeting remains in development. The downloaded minutes/email files were inspected and contain the expected synthetic content. Real-input extraction, additional-user permissions, and separate-environment restore still require validation.
 

@@ -56,6 +56,17 @@ test('accepts exact text limits and rejects overlong content and evidence', () =
   const x = example(); x.proposals[0].evidence.excerpt = 'e'.repeat(10001);
   assert.throws(() => validate(x, id), /10000/);
 });
+test('validates source filename capacity and colon-free meeting keys', () => {
+  const x = example();
+  x.proposals[0].evidence.sourceName = 'f'.repeat(400);
+  assert.equal(validate(x, id).proposals[0].evidence.sourceName.length, 400);
+  x.proposals[0].evidence.sourceName += 'f';
+  assert.throws(() => validate(x, id), /sourceName.*400/);
+  const y = example(); y.meeting.sourceKey = 'meeting-2026-11-03T14:00:00Z';
+  assert.throws(() => validate(y, id), /sourceKey/);
+  y.meeting.sourceKey = 'meeting-2026-11-03T140000Z';
+  assert.equal(validate(y, id).meeting.sourceKey, y.meeting.sourceKey);
+});
 test('transaction includes optimistic concurrency and catches nested failures', () => {
   const b = batch([{ method: 'PATCH', path: `pmdh_proposals(${id})`, etag: 'W/"12"', body: { status: 1 } }]);
   assert.match(b.body, /If-Match: W\/"12"/);
