@@ -1,6 +1,6 @@
 # PM Delivery Hub
 
-PM Delivery Hub is an AI-assisted project-management workspace built around Microsoft 365. This repository starts the Dataverse solution source; it is not yet connected to a Power Platform environment and does not contain a deployed app, tables, flows, or AI agent.
+PM Delivery Hub is an AI-assisted project-management workspace built around Microsoft 365. The development environment contains the `PMDeliveryHub` solution, the Project table, and a published basic model-driven app with a Project form and Active Projects view. Synthetic record creation and required-field validation have been tested. The unmanaged milestone solution, version `1.0.0.1`, has been exported and unpacked into the local solution source. There is no meeting workflow or AI agent yet, and project-team access has not been implemented. See [docs/DATA-MODEL.md](docs/DATA-MODEL.md) for the implementation checkpoint.
 
 ## Initial architecture
 
@@ -27,6 +27,9 @@ PM-Delivery-Hub/
   PMDeliveryHub/
     PMDeliveryHub.cdsproj
     src/
+      Entities/
+      AppModules/
+      AppModuleSiteMaps/
       Other/
         Solution.xml
         Customizations.xml
@@ -50,10 +53,30 @@ From the solution directory, authenticate to an approved development environment
 
 ```powershell
 cd C:\aiatbecs\PM-Delivery-Hub\PMDeliveryHub
-pac auth create --url <dataverse-environment-url>
+pac auth create --name PMDeliveryHub-Dev --environment <dataverse-environment-url>
 ```
 
-The solution source is intentionally empty beyond its generated manifest. Build and deployment steps should be added after the target environment, publisher, and solution lifecycle are confirmed.
+The development work to date used the authenticated maker portal. Device-code CLI sign-in was blocked by tenant Conditional Access; do not disable or bypass that policy. Local packing and unpacking do not require tenant authentication.
+
+## Milestone backup and restore
+
+Version `1.0.0.1` was exported as an unmanaged solution and unpacked with `pac solution unpack`. Repacking the source with `pac solution pack` succeeded. A restore into a separate environment has not yet been tested.
+
+From the solution directory, create an unmanaged package in an existing output directory:
+
+```powershell
+pac solution pack --zipfile <output-zip-path> --folder .\src --packagetype Unmanaged
+```
+
+In an approved development environment, use **Solutions > Import solution** to import the package. The export declares dependencies on `msdyn_PowerAdminSettingsEmail (2.2.3580.1)`, `AppModuleWebResources (2.5)`, and `msdyn_AppFrameworkInfraExtensions (1.0.0.27)`. Check compatible dependencies and security-role mappings before importing. Do not use this unmanaged backup as the production release process.
+
+Solution exports back up component definitions, not project rows, uploaded documents, user/team membership, or all environment settings. Autonumber seed values must be checked separately on restore. No Git remote is configured yet, so a local commit does not provide off-machine backup.
+
+## Trying the development app
+
+In the maker portal, select the approved development environment, open the `PMDeliveryHub` solution, and play the **PM Delivery Hub** model-driven app. Under **Delivery > Projects**, choose **New**, complete the required fields, and save. Project Number is generated automatically and is read-only on the main form.
+
+Use synthetic data only until project access and data-handling requirements are implemented. The app has not been shared with additional users. The Active Projects view uses Dataverse's Active status; selecting Completed or Cancelled/Archived in the custom Stage column does not automatically deactivate a project.
 
 ## Delivery sequence
 

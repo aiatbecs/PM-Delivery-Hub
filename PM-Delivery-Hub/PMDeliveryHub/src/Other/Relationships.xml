@@ -1,2 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<EntityRelationships xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" />
+<EntityRelationships xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <EntityRelationship Name="business_unit_pmdh_project" />
+  <EntityRelationship Name="lk_pmdh_project_createdby" />
+  <EntityRelationship Name="lk_pmdh_project_modifiedby" />
+  <EntityRelationship Name="owner_pmdh_project" />
+  <EntityRelationship Name="pmdh_project_ProjectManager_systemuser" />
+  <EntityRelationship Name="pmdh_project_SolutionArchitect_systemuser" />
+  <EntityRelationship Name="team_pmdh_project" />
+  <EntityRelationship Name="user_pmdh_project" />
+</EntityRelationships>

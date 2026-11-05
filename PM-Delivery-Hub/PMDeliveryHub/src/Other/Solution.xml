@@ -1,35 +1,24 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ImportExportXml version="9.1.0.643" SolutionPackageVersion="9.1" languagecode="1033" generatedBy="CrmLive" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ImportExportXml version="9.2.26104.132" SolutionPackageVersion="9.2" languagecode="1033" generatedBy="CrmLive" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" OrganizationVersion="9.2.26104.132" OrganizationSchemaType="Standard" CRMServerServiceabilityVersion="9.2.26104.00132">
   <SolutionManifest>
-    <!-- Unique Name of Cds Solution-->
     <UniqueName>PMDeliveryHub</UniqueName>
     <LocalizedNames>
-      <!-- Localized Solution Name in language code -->
-      <LocalizedName description="PMDeliveryHub" languagecode="1033" />
+      <LocalizedName description="PM Delivery Hub" languagecode="1033" />
     </LocalizedNames>
     <Descriptions />
-    <Version>1.0</Version>
-    <!-- Solution Package Type: Unmanaged(0)/Managed(1)/Both(2)-->
-    <Managed>2</Managed>
+    <Version>1.0.0.1</Version>
+    <Managed>0</Managed>
     <Publisher>
-      <!-- Unique Publisher Name of Cds Solution -->
       <UniqueName>PMDeliveryHub</UniqueName>
       <LocalizedNames>
-        <!-- Localized Cds Publisher Name in language code-->
-        <LocalizedName description="PMDeliveryHub" languagecode="1033" />
+        <LocalizedName description="PM Delivery Hub" languagecode="1033" />
       </LocalizedNames>
-      <Descriptions>
-        <!-- Description of Cds Publisher in language code -->
-        <Description description="PMDeliveryHub" languagecode="1033" />
-      </Descriptions>
+      <Descriptions />
       <EMailAddress xsi:nil="true"></EMailAddress>
       <SupportingWebsiteUrl xsi:nil="true"></SupportingWebsiteUrl>
-      <!-- Customization Prefix for the Cds Publisher-->
       <CustomizationPrefix>pmdh</CustomizationPrefix>
-      <!-- Derived Option Value Prefix for the Customization Prefix of Cds Publisher -->
       <CustomizationOptionValuePrefix>42507</CustomizationOptionValuePrefix>
       <Addresses>
-        <!-- Address of the Publisher-->
         <Address>
           <AddressNumber>1</AddressNumber>
           <AddressTypeCode>1</AddressTypeCode>
@@ -88,7 +77,29 @@
         </Address>
       </Addresses>
     </Publisher>
-    <RootComponents />
-    <MissingDependencies />
+    <RootComponents>
+      <RootComponent type="1" schemaName="pmdh_project" behavior="0" />
+      <RootComponent type="1" schemaName="systemuser" behavior="1" />
+      <RootComponent type="62" schemaName="pmdh_PMDeliveryHub" behavior="0" />
+      <RootComponent type="80" schemaName="pmdh_PMDeliveryHub" behavior="0" />
+    </RootComponents>
+    <MissingDependencies>
+      <MissingDependency>
+        <Required type="1" schemaName="systemuser" displayName="SystemUser" parentSchemaName="" solution="msdyn_PowerAdminSettingsEmail (2.2.3580.1)" />
+        <Dependent type="1" schemaName="systemuser" displayName="SystemUser" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="61" schemaName="msdyn_/Images/AppModule_Default_Icon.png" displayName="msdyn_/Images/AppModule_Default_Icon.png" solution="AppModuleWebResources (2.5)">
+          <package appName="AppModule Web Resources Package" version="2.5">AppModuleWebResources (2.5)</package>
+        </Required>
+        <Dependent type="80" schemaName="pmdh_PMDeliveryHub" displayName="PM Delivery Hub" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="SettingDefinition" displayName="AppChannel" solution="msdyn_AppFrameworkInfraExtensions (1.0.0.27)" id.uniquename="AppChannel">
+          <package appName="PowerAppsAppFramework Package" version="1.0.0.28">PowerAppsAppFramework_Anchor (1.0.0.28)</package>
+        </Required>
+        <Dependent type="AppSetting" displayName="parentappmoduleid.uniquename=pmdh_PMDeliveryHub,settingdefinitionid.uniquename=AppChannel" id.parentappmoduleid.uniquename="pmdh_PMDeliveryHub" id.settingdefinitionid.uniquename="AppChannel" />
+      </MissingDependency>
+    </MissingDependencies>
   </SolutionManifest>
 </ImportExportXml>

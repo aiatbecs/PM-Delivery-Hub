@@ -2,9 +2,36 @@
 
 ## Status and scope
 
-This is the initial design for the Power Platform Foundation, drafted from the project plan. It is not yet a deployed Dataverse schema. Retain the solution publisher `PMDeliveryHub` and customization prefix `pmdh` when creating components in an environment.
+This is the initial design for the Power Platform Foundation, drafted from the project plan. Implementation has started in the development environment; the full schema is not yet deployed. Retain the solution publisher `PMDeliveryHub` and customization prefix `pmdh` when creating components in an environment.
 
 The MVP covers project context and the meeting-to-reviewed-updates workflow. Tables marked **Later** can be added after the MVP workflow is validated.
+
+### Implementation checkpoint
+
+- The development solution `PMDeliveryHub` was created with version `1.0.0.0` and exported as unmanaged milestone version `1.0.0.1`.
+- The standard Project table has been created inside the solution with schema name `pmdh_Project` and User or team ownership.
+- Its primary text column is Project Name (`pmdh_ProjectName`), Business required, with the portal default maximum length of 850 characters.
+- The `account_id`, `TPID`, and `Wave_id` columns have been created and their saved settings verified: Single line of text, Text format, Business required, maximum 100 characters each. They store external identifiers, preserve leading zeros, and allow repeated values across projects.
+- Project Number (`pmdh_ProjectNumber`) has been created as an autonumber with prefix `PMDH`, six minimum digits, and initial seed 1. A synthetic project generated `PMDH-000001`, verified again after reopening. Autonumbers can contain gaps and six digits is a minimum, not a cap.
+- Customer (required text, 200 characters), Project Manager (required User lookup), Solution Architect (optional User lookup), Stage, Health, Start Date, Target End Date, and Current Summary (optional plain multiline text, 2,000 characters) have been created. Saved types, requirements, lookup targets, choice labels/defaults, and date-only time zone settings were checked.
+- Stage is an optional local single-select choice with the six values listed below and no default. Health is an optional local single-select choice with default Not assessed.
+- The Project main form (Information) has been saved and published with the business columns and Owner. Project Number is read-only on this form; this is a UI restriction, not an API immutability guarantee.
+- The basic PM Delivery Hub model-driven app has been saved and published inside the solution, with Delivery > Projects navigation.
+- Active Projects has been saved and published with Project Name, Created On, Project Number, Customer, Project Manager, Stage, Health, account_id, TPID, Wave_id, and Target End Date. Its Active-status filter is unchanged; custom Stage does not change Dataverse status.
+- SharePoint Location and the related tables have not been created. Access enforcement is still pending.
+- Access is intended for the assigned PM and project team, with portfolio administrators seeing all projects. Ownership alone does not enforce this: security roles and team/sharing behavior still need implementation and testing.
+- The environment solution has been exported and unpacked into the local solution source. Local repacking passed; importing into another environment has not been tested. The solution backup does not include the synthetic project row or other business data.
+
+### Basic app validation
+
+- Created and reopened the synthetic record `TEST - PM Delivery Hub validation`; its generated number is `PMDH-000001`.
+- Confirmed `account_id` and TPID preserve leading zeros after saving and reopening.
+- Confirmed Health defaults to Not assessed and Stage remains unselected.
+- Confirmed the saved synthetic project is visible in Active Projects with its generated number.
+- Confirmed the main form blocks saving when Project Name, account_id, TPID, Wave_id, Customer, or Project Manager is missing. Testing exposed a Project Name requirement mismatch; its Business required metadata was explicitly saved and the Project table published, then validation passed after refreshing the app.
+- The synthetic project remains in development for demonstration; the extra missing-field test was not saved.
+- Browser diagnostics reported missing Teams licensing and platform telemetry/resource errors. They did not prevent the tested project operations; Teams integration is not validated or enabled by this milestone.
+- Project-level access, API enforcement of required fields, autonumber uniqueness keys, multi-user behavior, and date-range validation have not been tested.
 
 ## Design rules
 
@@ -21,15 +48,18 @@ The MVP covers project context and the meeting-to-reviewed-updates workflow. Tab
 
 | Column | Suggested Dataverse type | Notes |
 |---|---|---|
-| Project Number | Autonumber | Human-readable identifier; unique alternate key if the chosen format is stable |
+| Project Number | Autonumber | `PMDH-{SEQNUM:6}`, initial seed 1; human-readable identifier; unique alternate key still to be configured |
 | Project Name | Text | Primary name |
-| Customer | Text | Organization or customer name |
-| Project Manager | User lookup | Internal accountable PM |
+| account_id | Text, Business required, 100 characters | External account identifier; schema name `pmdh_account_id`; not a Dataverse Account lookup |
+| TPID | Text, Business required, 100 characters | External identifier; schema name `pmdh_TPID`; preserves leading zeros |
+| Wave_id | Text, Business required, 100 characters | External wave identifier; schema name `pmdh_Wave_id` |
+| Customer | Text, Business required, 200 characters | Organization or customer name |
+| Project Manager | User lookup, Business required | Internal accountable PM; assignment does not itself grant record access |
 | Solution Architect | User lookup, optional | Internal SA when applicable |
-| Stage | Choice | Initiating, Planning, Executing, Monitoring/Control, Closing |
-| Health | Choice | Green, Amber, Red, Not assessed |
-| Start Date / Target End Date | Date only | Target dates |
-| Current Summary | Multiline text | Approved, current project context; refreshed from reviewed information |
+| Stage | Local Choice, optional | Executing Pre-requisites, Finalizing Scope, Executing Migration, Deferred by Customer, Cancelled/Archived, Completed; no default |
+| Health | Local Choice, optional | Green, Amber, Red, Not assessed; default Not assessed |
+| Start Date / Target End Date | Date only, optional | Date-only format and time zone adjustment; no user-local date conversion |
+| Current Summary | Plain multiline text, optional, 2,000 characters | Approved, current project context; refreshed from reviewed information |
 | SharePoint Location | URL | Project document library or folder |
 
 ### Stakeholder — MVP
