@@ -42,20 +42,36 @@ export const tables = [
     memo('Payload', 'Structured Proposal', 20000),
     choice('ReviewStatus', 'Review Status', ['Pending', 'Approved', 'Edited and Approved', 'Rejected']),
     date('ReviewedOn', 'Reviewed On'),
-    text('AppliedId', 'Applied Record ID', 36)
+    text('AppliedId', 'Applied Record ID', 36),
+    text('TargetRecordId', 'Update Target Record ID', 36),
+    text('TargetVersion', 'Update Target Version', 30),
+    memo('BeforePayload', 'Before Approval Snapshot', 50000),
+    memo('SourceCandidates', 'Consolidated Source Candidates', 4000)
   ]),
   ...['Action', 'Risk', 'Issue', 'Dependency'].map(name => table(name, name, `${name === 'Dependency' ? 'Dependencies' : name + 's'}`, [
     memo('Description', 'Description', 10000), text('ResponsibleParty', 'Responsible Party', 200),
     date('DueDate', 'Due Date', true), text('Status', 'Status', 100),
     memo('Impact', 'Impact', 4000), memo('Response', 'Mitigation / Resolution', 4000),
-    text('Probability', 'Probability', 100)
-  ]))
+    text('Probability', 'Probability', 100), text('LastReviewId', 'Latest Applied Review ID', 36)
+  ])),
+  table('RecordChange', 'RAID Change', 'RAID Changes', [
+    text('RecordId', 'Official Record ID', 36, true),
+    text('Kind', 'Record Type', 100, true),
+    text('ChangeType', 'Change Type', 100, true),
+    memo('BeforePayload', 'Before Snapshot', 50000),
+    memo('AfterPayload', 'After Snapshot', 50000),
+    date('ChangedOn', 'Changed On')
+  ])
 ];
 export const lookups = [];
 for (const t of tables) {
   const name = t.SchemaName.toLowerCase();
   lookups.push({ table: name, column: 'Project', target: 'pmdh_project', mandatory: true });
-  if (name !== 'pmdh_meeting') lookups.push({ table: name, column: 'Meeting', target: 'pmdh_meeting', mandatory: true });
+  if (name !== 'pmdh_meeting') lookups.push({ table: name, column: 'Meeting', target: 'pmdh_meeting', mandatory: name !== 'pmdh_recordchange' });
+  if (name === 'pmdh_recordchange') {
+    lookups.push({ table: name, column: 'Proposal', target: 'pmdh_proposal', mandatory: false });
+    lookups.push({ table: name, column: 'ChangedBy', target: 'systemuser', mandatory: true });
+  }
   if (name === 'pmdh_proposal') {
     lookups.push({ table: name, column: 'Evidence', target: 'pmdh_evidence', mandatory: true });
     lookups.push({ table: name, column: 'ReviewedBy', target: 'systemuser', mandatory: false });

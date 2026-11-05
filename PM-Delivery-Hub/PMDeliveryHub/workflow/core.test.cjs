@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { validate, payload, batch, checkBatch } = require('./core.js');
+const { validate, payload, batch, checkBatch, recordPayload, recordBody, version } = require('./core.js');
 const id = '11111111-1111-1111-1111-111111111111';
 const example = () => ({ version: 1, projectId: id, meeting: { sourceKey: 'meeting-1', title: 'Synthetic review' },
   proposals: [{ key: 'a1', type: 'Action', payload: { title: 'Prepare test', description: 'Prepare synthetic test' },
@@ -75,4 +75,25 @@ test('transaction includes optimistic concurrency and catches nested failures', 
   assert.throws(() => checkBatch('HTTP/1.1 302 Found'), /failed/);
   assert.throws(() => checkBatch('unexpected'), /failed/);
   checkBatch('HTTP/1.1 204 No Content');
+});
+test('legacy proposals normalize to Open without altering other content', () => {
+  assert.equal(payload({ title: 'Legacy', description: 'Evidence-backed content' }).status, 'Open');
+  assert.equal(payload({ title: 't', description: 'd', status: 'Resolved' }).status, 'Resolved');
+  assert.throws(() => payload({ title: 't', description: 'd', status: 's'.repeat(101) }), /status.*100/);
+});
+test('record edits map only supported business fields and preserve dates', () => {
+  const p = recordPayload({ pmdh_name: 'Risk', pmdh_description: 'Description', pmdh_status: 'Monitoring',
+    pmdh_duedate: '2026-11-10T00:00:00Z', _pmdh_project_value: id, pmdh_lastreviewid: id });
+  const body = recordBody(p);
+  assert.equal(body.pmdh_status, 'Monitoring');
+  assert.equal(body.pmdh_duedate, '2026-11-10');
+  assert.equal(Object.keys(body).length, 8);
+  assert.equal(body.pmdh_project, undefined);
+  assert.equal(body.pmdh_lastreviewid, undefined);
+  assert.equal(recordPayload({ pmdh_name: 't', pmdh_description: 'd' }).dueDate, null);
+});
+test('update snapshots require a valid concurrency version', () => {
+  assert.equal(version('W/"123456"'), '123456');
+  for (const etag of [undefined, '', '"123"', 'W/"bad"', 'W/"1"\r\nInjected: yes'])
+    assert.throws(() => version(etag), /concurrency/);
 });

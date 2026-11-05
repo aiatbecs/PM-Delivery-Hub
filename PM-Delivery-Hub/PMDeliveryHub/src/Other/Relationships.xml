@@ -7,6 +7,7 @@
   <EntityRelationship Name="business_unit_pmdh_meeting" />
   <EntityRelationship Name="business_unit_pmdh_project" />
   <EntityRelationship Name="business_unit_pmdh_proposal" />
+  <EntityRelationship Name="business_unit_pmdh_recordchange" />
   <EntityRelationship Name="business_unit_pmdh_risk" />
   <EntityRelationship Name="lk_pmdh_action_createdby" />
   <EntityRelationship Name="lk_pmdh_action_modifiedby" />
@@ -22,6 +23,8 @@
   <EntityRelationship Name="lk_pmdh_project_modifiedby" />
   <EntityRelationship Name="lk_pmdh_proposal_createdby" />
   <EntityRelationship Name="lk_pmdh_proposal_modifiedby" />
+  <EntityRelationship Name="lk_pmdh_recordchange_createdby" />
+  <EntityRelationship Name="lk_pmdh_recordchange_modifiedby" />
   <EntityRelationship Name="lk_pmdh_risk_createdby" />
   <EntityRelationship Name="lk_pmdh_risk_modifiedby" />
   <EntityRelationship Name="owner_pmdh_action" />
@@ -31,6 +34,7 @@
   <EntityRelationship Name="owner_pmdh_meeting" />
   <EntityRelationship Name="owner_pmdh_project" />
   <EntityRelationship Name="owner_pmdh_proposal" />
+  <EntityRelationship Name="owner_pmdh_recordchange" />
   <EntityRelationship Name="owner_pmdh_risk" />
   <EntityRelationship Name="pmdh_action_Evidence" />
   <EntityRelationship Name="pmdh_action_Meeting" />
@@ -53,6 +57,10 @@
   <EntityRelationship Name="pmdh_proposal_Meeting" />
   <EntityRelationship Name="pmdh_proposal_Project" />
   <EntityRelationship Name="pmdh_proposal_ReviewedBy" />
+  <EntityRelationship Name="pmdh_recordchange_ChangedBy" />
+  <EntityRelationship Name="pmdh_recordchange_Meeting" />
+  <EntityRelationship Name="pmdh_recordchange_Project" />
+  <EntityRelationship Name="pmdh_recordchange_Proposal" />
   <EntityRelationship Name="pmdh_risk_Evidence" />
   <EntityRelationship Name="pmdh_risk_Meeting" />
   <EntityRelationship Name="pmdh_risk_Project" />
@@ -64,6 +72,7 @@
   <EntityRelationship Name="team_pmdh_meeting" />
   <EntityRelationship Name="team_pmdh_project" />
   <EntityRelationship Name="team_pmdh_proposal" />
+  <EntityRelationship Name="team_pmdh_recordchange" />
   <EntityRelationship Name="team_pmdh_risk" />
   <EntityRelationship Name="user_pmdh_action" />
   <EntityRelationship Name="user_pmdh_dependency" />
@@ -72,5 +81,6 @@
   <EntityRelationship Name="user_pmdh_meeting" />
   <EntityRelationship Name="user_pmdh_project" />
   <EntityRelationship Name="user_pmdh_proposal" />
+  <EntityRelationship Name="user_pmdh_recordchange" />
   <EntityRelationship Name="user_pmdh_risk" />
 </EntityRelationships>

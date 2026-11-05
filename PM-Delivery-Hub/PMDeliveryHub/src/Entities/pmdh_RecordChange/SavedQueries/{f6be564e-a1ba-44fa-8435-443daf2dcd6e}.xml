@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<savedqueries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <savedquery>
+    <IsCustomizable>1</IsCustomizable>
+    <CanBeDeleted>0</CanBeDeleted>
+    <isquickfindquery>0</isquickfindquery>
+    <isprivate>0</isprivate>
+    <isdefault>1</isdefault>
+    <savedqueryid>{f6be564e-a1ba-44fa-8435-443daf2dcd6e}</savedqueryid>
+    <layoutxml>
+      <grid name="resultset" jump="pmdh_name" select="1" icon="1" preview="1">
+        <row name="result" id="pmdh_recordchangeid">
+          <cell name="pmdh_name" width="300" />
+          <cell name="createdon" width="125" />
+        </row>
+      </grid>
+    </layoutxml>
+    <querytype>1</querytype>
+    <fetchxml>
+      <fetch version="1.0" mapping="logical">
+        <entity name="pmdh_recordchange">
+          <attribute name="pmdh_recordchangeid" />
+          <attribute name="pmdh_name" />
+          <attribute name="createdon" />
+          <order attribute="pmdh_name" descending="false" />
+        </entity>
+      </fetch>
+    </fetchxml>
+    <IntroducedVersion>1.0</IntroducedVersion>
+    <LocalizedNames>
+      <LocalizedName description="RAID Change Advanced Find View" languagecode="1033" />
+    </LocalizedNames>
+  </savedquery>
+</savedqueries>

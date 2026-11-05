@@ -2,6 +2,8 @@
 
 PM Delivery Hub is an AI-assisted project-management workspace built around Microsoft 365. The development environment contains the `PMDeliveryHub` solution, a published Project app, and a **Meeting Review** workflow: import Copilot JSON with evidence, edit/approve/reject proposals, apply approved summaries and actions/risks/issues/dependencies, and prepare downloadable minutes/email drafts. Synchronous Dataverse plugins enforce approval and provenance for RAID records. Synthetic end-to-end tests have passed. Project-team access and integrated AI are not yet enabled; use synthetic data only. See [docs/MEETING-WORKFLOW.md](docs/MEETING-WORKFLOW.md) for usage and limits.
 
+The RAID workspace adds **Actions, Risks, Issues, Dependencies** navigation, project-filtered editable records, reviewed corrections to existing items, before/after history, stale-update protection, and summary consolidation with explicit replacement confirmation. Approved proposals remain immutable.
+
 ## Target architecture
 
 - **Power Apps model-driven app** for project and delivery operations
@@ -71,10 +73,11 @@ The development work to date used the authenticated maker portal. Device-code CL
 
 ## Milestone backup and restore
 
-Version `1.0.0.3` includes the Meeting Review import fixes: 400-character evidence filenames, visible validation errors, and key-format guidance. It was exported as an unmanaged solution and unpacked with `pac solution unpack`. The earlier `1.0.0.2` ZIP preserves the initial Meeting Review milestone; `1.0.0.1` preserves the basic Project-only milestone. Repacking the source with `pac solution pack` succeeded. A restore into a separate environment has not yet been tested.
+Version `1.0.0.4` includes the RAID workspace, reviewed updates, change history, concurrency guards, and summary consolidation. It was exported as an unmanaged solution and unpacked with `pac solution unpack`. Earlier ZIPs preserve import fixes (`1.0.0.3`), the initial Meeting Review milestone (`1.0.0.2`), and the basic Project app (`1.0.0.1`). Repacking the source with `pac solution pack` succeeded. A restore into a separate environment has not yet been tested.
 
 The `1.0.0.2` export SHA-256 is `7A25B9475083403B290B5E49A701B9C9D526B7C6359340F24493DAD1BA2BFCE7`.
 The `1.0.0.3` export SHA-256 is `929728EBACF0B13DD288CFBD2D84032A9220AEE6053B87C20B739CD2A555DFB1`.
+The `1.0.0.4` export SHA-256 is `7B829521245EFF5326024C2400D442FC068BD0D72ADD09CAF49EEAD29EC96A89`.
 
 From the solution directory, create an unmanaged package in an existing output directory:
 
@@ -93,6 +96,8 @@ In the maker portal, select the approved development environment, open the `PMDe
 Use synthetic data only until project access and data-handling requirements are implemented. The app has not been shared with additional users. The Active Projects view uses Dataverse's Active status; selecting Completed or Cancelled/Archived in the custom Stage column does not automatically deactivate a project.
 
 For the new workflow, open **Delivery > Meeting Review**, select a project, and download or copy the extraction prompt. Process synthetic transcripts/screenshots in the approved Microsoft 365 Copilot account, paste its JSON back into the app, and review the proposals. Generic drafts also appear in a copyable preview if the browser blocks downloads. The app does not itself interpret screenshots or generate your corporate document templates.
+
+Use **Delivery > Actions / Risks / Issues / Dependencies** to load the selected project's records and save operational changes. **Propose reviewed update** creates a Pending correction for the selected meeting; it does not update the official record until approved. In Meeting Review, choose **Create new** or **Update existing**, compare the old values with the proposed fields, and approve. Update replaces all displayed business fields, including clearing blank optional fields; original source links remain unchanged. **View change history** shows the original approval/evidence plus new before/after changes.
 
 ## Workflow source validation
 

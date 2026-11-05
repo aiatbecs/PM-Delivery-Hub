@@ -12,7 +12,9 @@ The AI proposes. A project manager reviews and approves. AI output must not sile
 
 The Project app and manual-Copilot review workflow are deployed. Supported proposal types are **Summary, Action, Risk, Issue, Dependency**. Evidence-backed pending proposals are imported from JSON; approval applies edited content transactionally, rejection creates no official record, and reviewer/time are recorded server-side. Meeting minutes and follow-up email are generic local drafts with a copyable preview, not SharePoint artifacts or corporate templates.
 
-This is an increment toward the acceptance criteria below, not completion of the entire MVP. Stakeholders, decisions, prerequisites, scope changes, updates/matching of existing RAID items, SharePoint artifact registration, integrated AI, and tested project-team permissions remain outstanding. See [MEETING-WORKFLOW.md](MEETING-WORKFLOW.md) for current behavior and synthetic validation.
+This is an increment toward the acceptance criteria below, not completion of the entire MVP. Stakeholders, decisions, prerequisites, scope changes, SharePoint artifact registration, integrated AI, and tested project-team permissions remain outstanding. See [MEETING-WORKFLOW.md](MEETING-WORKFLOW.md) for current behavior and synthetic validation.
+
+Milestone `1.0.0.4` adds explicit matching to an existing same-project/same-type RAID record, reviewed updates without duplicates, operational record editing, before/after change history, stale-update rejection, and summary consolidation/replacement confirmation. Automatic/fuzzy matching, corporate templates, project-team authorization, and SharePoint outputs remain outstanding.
 
 ## Initial records
 

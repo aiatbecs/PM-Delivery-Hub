@@ -13,7 +13,7 @@
     for (const key of Object.keys(value)) if (!fields.includes(key)) throw new Error(`Unknown ${name} field: ${key}`);
   }
   function payload(value) {
-    object(value, 'payload', ['title', 'description', 'responsibleParty', 'dueDate', 'impact', 'response', 'probability']);
+    object(value, 'payload', ['title', 'description', 'responsibleParty', 'dueDate', 'impact', 'response', 'probability', 'status']);
     const result = { title: string(value.title, 'title', 200), description: string(value.description, 'description', 10000) };
     for (const name of ['responsibleParty', 'impact', 'response', 'probability'])
       result[name] = string(value[name], name, name === 'responsibleParty' ? 200 : name === 'probability' ? 100 : 4000, true);
@@ -21,6 +21,7 @@
     if (due && (!/^\d{4}-\d{2}-\d{2}$/.test(due) || !Number.isFinite(Date.parse(due)) ||
       new Date(due).toISOString().slice(0, 10) !== due)) throw new Error('dueDate must be a real YYYY-MM-DD date, or null.');
     result.dueDate = due || null;
+    result.status = string(value.status, 'status', 100, true) || 'Open';
     return result;
   }
   function validate(input, projectId) {
@@ -78,7 +79,22 @@
     if (!statuses.length || statuses.some(s => s < 200 || s >= 300))
       throw new Error(`Dataverse transaction failed: ${text.slice(0, 4000)}`);
   }
-  const api = { KINDS, validate, payload, batch, checkBatch };
+  const FIELDS = { title: 'pmdh_name', description: 'pmdh_description', responsibleParty: 'pmdh_responsibleparty',
+    dueDate: 'pmdh_duedate', impact: 'pmdh_impact', response: 'pmdh_response', probability: 'pmdh_probability', status: 'pmdh_status' };
+  function recordPayload(row) {
+    const values = Object.fromEntries(Object.entries(FIELDS).map(([key, field]) => [key,
+      key === 'dueDate' ? row[field]?.slice(0, 10) || null : row[field] || '']));
+    return payload(values);
+  }
+  function recordBody(value) {
+    return Object.fromEntries(Object.entries(payload(value)).map(([key, val]) => [FIELDS[key], val]));
+  }
+  function version(etag) {
+    const match = /^W\/"(\d+)"$/.exec(etag || '');
+    if (!match) throw new Error('Record concurrency token missing or invalid. Reload before editing.');
+    return match[1];
+  }
+  const api = { KINDS, FIELDS, validate, payload, batch, checkBatch, recordPayload, recordBody, version };
   if (typeof module !== 'undefined') module.exports = api;
   else root.PMDH = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

@@ -20,6 +20,26 @@
             <Title LCID="1033" Title="Meeting Review" />
           </Titles>
         </SubArea>
+        <SubArea Id="subarea_11ac1d55" ResourceId="SitemapDesigner.NewSubArea" Icon="/_imgs/imagestrips/transparent_spacer.gif" Url="/WebResources/pmdh_review.html?data=Action" Client="All,Outlook,OutlookLaptopClient,OutlookWorkstationClient,Web" AvailableOffline="true" PassParams="false" Sku="All,OnPremise,Live,SPLA">
+          <Titles>
+            <Title LCID="1033" Title="Actions" />
+          </Titles>
+        </SubArea>
+        <SubArea Id="subarea_9f48bb12" ResourceId="SitemapDesigner.NewSubArea" Icon="/_imgs/imagestrips/transparent_spacer.gif" Url="/WebResources/pmdh_review.html?data=Risk" Client="All,Outlook,OutlookLaptopClient,OutlookWorkstationClient,Web" AvailableOffline="true" PassParams="false" Sku="All,OnPremise,Live,SPLA">
+          <Titles>
+            <Title LCID="1033" Title="Risks" />
+          </Titles>
+        </SubArea>
+        <SubArea Id="subarea_f63f0521" ResourceId="SitemapDesigner.NewSubArea" Icon="/_imgs/imagestrips/transparent_spacer.gif" Url="/WebResources/pmdh_review.html?data=Issue" Client="All,Outlook,OutlookLaptopClient,OutlookWorkstationClient,Web" AvailableOffline="true" PassParams="false" Sku="All,OnPremise,Live,SPLA">
+          <Titles>
+            <Title LCID="1033" Title="Issues" />
+          </Titles>
+        </SubArea>
+        <SubArea Id="subarea_d665fcc4" ResourceId="SitemapDesigner.NewSubArea" Icon="/_imgs/imagestrips/transparent_spacer.gif" Url="/WebResources/pmdh_review.html?data=Dependency" Client="All,Outlook,OutlookLaptopClient,OutlookWorkstationClient,Web" AvailableOffline="true" PassParams="false" Sku="All,OnPremise,Live,SPLA">
+          <Titles>
+            <Title LCID="1033" Title="Dependencies" />
+          </Titles>
+        </SubArea>
       </Group>
     </Area>
   </SiteMap>

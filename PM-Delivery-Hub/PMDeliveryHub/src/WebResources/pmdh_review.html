@@ -14,6 +14,10 @@
     #message{white-space:pre-wrap;padding:12px;border-radius:4px}#message.error{background:#ffe2e2;color:#8a1024}
     pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f4f6f9;padding:12px}small{display:block;color:#44556b}
     .status{font-weight:600}.row{display:flex;gap:16px}.row>div{flex:1}a{color:#155eaa}
+    .editor-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .editor-grid label{margin:0}.editor-grid .wide{grid-column:1/-1}
+    .editor-grid textarea{min-height:80px;font:14px "Segoe UI",sans-serif}
+    @media(max-width:650px){.editor-grid{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
@@ -27,8 +31,18 @@
     <button id="refresh">Refresh meetings</button>
     <label for="meeting">Meeting</label><select id="meeting"></select>
     <button id="load">Load proposals and records</button>
+    <small>Refreshing or loading discards unsaved field edits. Save or apply them first.</small>
   </section>
-  <section>
+  <section id="workspace">
+    <h2>Project RAID workspace</h2>
+    <label for="kind">Show record type</label>
+    <select id="kind"><option value="">All RAID records</option><option>Action</option><option>Risk</option><option>Issue</option><option>Dependency</option></select>
+    <button id="raidload">Load project RAID records</button>
+    <p>Edit operational fields and save, or propose a reviewed correction using the selected meeting.
+      Original source links stay unchanged. Each new change records before/after values and the user/time.</p>
+    <div id="raid"></div>
+  </section>
+  <section class="meeting-workflow">
     <h2>1. Process input in your approved Copilot account</h2>
     <p>Supply the transcript and screenshots directly to Microsoft 365 Copilot. This page does not process images.
       Retain the originals in your approved storage. Copilot should quote source evidence with timestamps or screenshot labels.</p>
@@ -42,13 +56,20 @@
       Keys accept letters, digits, hyphens and underscores only; no colons.
       A changed candidate with an existing key is an error; it is not silently overwritten.</small>
   </section>
-  <section>
+  <section class="meeting-workflow">
     <h2>3. Review proposals</h2>
     <p>Approve applies the displayed edited content in one transaction. Reject leaves official records unchanged.
-      Reviewed proposals are immutable; submit a new candidate for further changes.</p>
+      Reviewed proposals are immutable. For corrections, choose Update existing and review current versus proposed content.</p>
     <div id="proposals"></div>
+    <h3>Consolidate pending summaries</h3>
+    <p>Select at least two pending Summary cards, then prepare and edit a combined draft.
+      Creating it explicitly rejects the selected originals; their evidence remains linked to the new draft.</p>
+    <button id="prepareSummary">Prepare combined summary</button>
+    <label for="combinedTitle">Combined summary title</label><input id="combinedTitle" maxlength="200">
+    <label for="combinedSummary">Combined summary (maximum 2,000 characters)</label><textarea id="combinedSummary" maxlength="2000"></textarea>
+    <button id="createSummary">Create combined draft and reject selected summaries</button>
   </section>
-  <section>
+  <section class="meeting-workflow">
     <h2>Approved meeting records</h2><div id="records"></div>
     <button id="minutes">Download draft minutes (.md)</button>
     <button id="email">Download follow-up draft (.eml)</button>
@@ -59,7 +80,7 @@
     <textarea id="output" readonly spellcheck="false"></textarea>
   </section>
 </main>
-<script src="pmdh_core.js?v=1.0.0.3"></script>
-<script src="pmdh_review.js?v=1.0.0.3"></script>
+<script src="pmdh_core.js?v=1.0.0.4-release"></script>
+<script src="pmdh_review.js?v=1.0.0.4-release"></script>
 </body>
 </html>
