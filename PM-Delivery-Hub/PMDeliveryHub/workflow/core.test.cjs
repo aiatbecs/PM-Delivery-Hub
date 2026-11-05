@@ -87,10 +87,17 @@ test('record edits map only supported business fields and preserve dates', () =>
   const body = recordBody(p);
   assert.equal(body.pmdh_status, 'Monitoring');
   assert.equal(body.pmdh_duedate, '2026-11-10');
-  assert.equal(Object.keys(body).length, 8);
+  assert.equal(Object.keys(body).length, 9);
+  assert.equal(body['pmdh_ResponsiblePerson@odata.bind'], null);
   assert.equal(body.pmdh_project, undefined);
   assert.equal(body.pmdh_lastreviewid, undefined);
   assert.equal(recordPayload({ pmdh_name: 't', pmdh_description: 'd' }).dueDate, null);
+});
+test('structured assignments use stable IDs and statuses reject ambiguous values', () => {
+  const body = recordBody({ title: 't', description: 'd', responsiblePersonId: id });
+  assert.equal(body['pmdh_ResponsiblePerson@odata.bind'], `/pmdh_people(${id})`);
+  assert.throws(() => payload({ title: 't', description: 'd', responsiblePersonId: 'Developer 1' }), /directory ID/);
+  assert.throws(() => payload({ title: 't', description: 'd', status: 'Done' }), /supported status/);
 });
 test('update snapshots require a valid concurrency version', () => {
   assert.equal(version('W/"123456"'), '123456');

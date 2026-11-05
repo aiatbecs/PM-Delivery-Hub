@@ -1,8 +1,10 @@
 # PM Delivery Hub
 
-PM Delivery Hub is an AI-assisted project-management workspace built around Microsoft 365. The development environment contains the `PMDeliveryHub` solution, a published Project app, and a **Meeting Review** workflow: import Copilot JSON with evidence, edit/approve/reject proposals, apply approved summaries and actions/risks/issues/dependencies, and prepare downloadable minutes/email drafts. Synchronous Dataverse plugins enforce approval and provenance for RAID records. Synthetic end-to-end tests have passed. Project-team access and integrated AI are not yet enabled; use synthetic data only. See [docs/MEETING-WORKFLOW.md](docs/MEETING-WORKFLOW.md) for usage and limits.
+PM Delivery Hub is an AI-assisted project-management workspace built around Microsoft 365. The development environment contains the `PMDeliveryHub` solution, a published Project app, and a **Meeting Review** workflow: import Copilot JSON with evidence, edit/approve/reject proposals, apply approved summaries and actions/risks/issues/dependencies, and prepare downloadable minutes/email drafts. Synchronous Dataverse plugins enforce approval and provenance for RAID records. Synthetic end-to-end tests have passed. Project-team access is implemented but still requires separate-user acceptance checks; integrated AI is not enabled. Use synthetic data until access/data-handling requirements are validated. See [docs/MEETING-WORKFLOW.md](docs/MEETING-WORKFLOW.md) for usage and limits.
 
 The RAID workspace adds **Actions, Risks, Issues, Dependencies** navigation, project-filtered editable records, reviewed corrections to existing items, before/after history, stale-update protection, and summary consolidation with explicit replacement confirmation. Approved proposals remain immutable.
+
+The **Project dashboard** page adds project, consolidated owner and My items views, with deadline/count drill-down. A people directory and project memberships provide stable responsibility IDs, including external/non-app people. Native Dataverse owner teams and PMDH security roles provide project-scoped member access and management portfolio access. See [REPORTING-ACCESS.md](docs/REPORTING-ACCESS.md) for setup, count definitions, restore requirements and the required separate-user access checks before sharing.
 
 ## Target architecture
 
@@ -36,7 +38,12 @@ PM-Delivery-Hub/
       core.test.cjs
       review.html
       review.js
+      dashboard.html
+      dashboard.js
+      reporting.js
+      reporting.test.cjs
       schema.mjs
+      deploy-dashboard.js
       serve-deployment.mjs
       ApprovalGuard/
     src/
@@ -73,11 +80,12 @@ The development work to date used the authenticated maker portal. Device-code CL
 
 ## Milestone backup and restore
 
-Version `1.0.0.4` includes the RAID workspace, reviewed updates, change history, concurrency guards, and summary consolidation. It was exported as an unmanaged solution and unpacked with `pac solution unpack`. Earlier ZIPs preserve import fixes (`1.0.0.3`), the initial Meeting Review milestone (`1.0.0.2`), and the basic Project app (`1.0.0.1`). Repacking the source with `pac solution pack` succeeded. A restore into a separate environment has not yet been tested.
+Version `1.0.0.5` adds people/membership, structured responsibility, dashboards and native team/role access. It was exported as an unmanaged solution and unpacked with `pac solution unpack`. Earlier ZIPs preserve the RAID workspace (`1.0.0.4`), import fixes (`1.0.0.3`), the initial Meeting Review milestone (`1.0.0.2`), and the basic Project app (`1.0.0.1`). Repacking the source with `pac solution pack` succeeded. A restore into a separate environment has not yet been tested.
 
 The `1.0.0.2` export SHA-256 is `7A25B9475083403B290B5E49A701B9C9D526B7C6359340F24493DAD1BA2BFCE7`.
 The `1.0.0.3` export SHA-256 is `929728EBACF0B13DD288CFBD2D84032A9220AEE6053B87C20B739CD2A555DFB1`.
 The `1.0.0.4` export SHA-256 is `7B829521245EFF5326024C2400D442FC068BD0D72ADD09CAF49EEAD29EC96A89`.
+The `1.0.0.5` export SHA-256 is `B785CE716A1BA26C0F3246A11860E3F2C3BBF748E79F6B16EFECB7BA026B27C6`.
 
 From the solution directory, create an unmanaged package in an existing output directory:
 
@@ -87,7 +95,7 @@ pac solution pack --zipfile <output-zip-path> --folder .\src --packagetype Unman
 
 In an approved development environment, use **Solutions > Import solution** to import the package. The export declares dependencies on `msdyn_PowerAdminSettingsEmail (2.2.3580.1)`, `AppModuleWebResources (2.5)`, and `msdyn_AppFrameworkInfraExtensions (1.0.0.27)`. Check compatible dependencies and security-role mappings before importing. Do not use this unmanaged backup as the production release process.
 
-Solution exports back up component definitions, not project rows, uploaded documents, user/team membership, or all environment settings. Autonumber seed values must be checked separately on restore. No Git remote is configured yet, so a local commit does not provide off-machine backup.
+Solution exports back up component definitions, not project rows, uploaded documents, user/team membership, or all environment settings. Autonumber seed values must be checked separately on restore. The approved Git remote is configured, but pushing was blocked by GitHub write permissions; a local commit alone does not provide off-machine backup.
 
 ## Trying the development app
 
@@ -104,7 +112,7 @@ Use **Delivery > Actions / Risks / Issues / Dependencies** to load the selected 
 From the project directory:
 
 ```powershell
-node --test .\PMDeliveryHub\workflow\core.test.cjs
+node --test .\PMDeliveryHub\workflow\core.test.cjs .\PMDeliveryHub\workflow\reporting.test.cjs
 node --check .\PMDeliveryHub\workflow\review.js
 dotnet build .\PMDeliveryHub\workflow\ApprovalGuard\ApprovalGuard.csproj -c Release -p:PMDHSigningKey=<private-signing-key-path>
 ```

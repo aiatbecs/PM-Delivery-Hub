@@ -2,6 +2,7 @@
   'use strict';
   const KINDS = ['Summary', 'Action', 'Risk', 'Issue', 'Dependency'];
   const GUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  const STATUSES = ['Open', 'In progress', 'Blocked', 'Monitoring', 'Closed', 'Resolved', 'Cancelled'];
   function string(value, name, max, optional = false) {
     if (optional && (value === undefined || value === null)) return '';
     if (typeof value !== 'string' || (!optional && !value.trim()) || value.length > max)
@@ -13,7 +14,7 @@
     for (const key of Object.keys(value)) if (!fields.includes(key)) throw new Error(`Unknown ${name} field: ${key}`);
   }
   function payload(value) {
-    object(value, 'payload', ['title', 'description', 'responsibleParty', 'dueDate', 'impact', 'response', 'probability', 'status']);
+    object(value, 'payload', ['title', 'description', 'responsibleParty', 'responsiblePersonId', 'dueDate', 'impact', 'response', 'probability', 'status']);
     const result = { title: string(value.title, 'title', 200), description: string(value.description, 'description', 10000) };
     for (const name of ['responsibleParty', 'impact', 'response', 'probability'])
       result[name] = string(value[name], name, name === 'responsibleParty' ? 200 : name === 'probability' ? 100 : 4000, true);
@@ -22,6 +23,9 @@
       new Date(due).toISOString().slice(0, 10) !== due)) throw new Error('dueDate must be a real YYYY-MM-DD date, or null.');
     result.dueDate = due || null;
     result.status = string(value.status, 'status', 100, true) || 'Open';
+    if (!STATUSES.includes(result.status)) throw new Error('Select a supported status: ' + STATUSES.join(', ') + '.');
+    result.responsiblePersonId = string(value.responsiblePersonId, 'responsiblePersonId', 36, true).toLowerCase();
+    if (result.responsiblePersonId && !GUID.test(result.responsiblePersonId)) throw new Error('Responsible person must be a valid directory ID.');
     return result;
   }
   function validate(input, projectId) {
@@ -84,17 +88,20 @@
   function recordPayload(row) {
     const values = Object.fromEntries(Object.entries(FIELDS).map(([key, field]) => [key,
       key === 'dueDate' ? row[field]?.slice(0, 10) || null : row[field] || '']));
+    values.responsiblePersonId = row._pmdh_responsibleperson_value || '';
     return payload(values);
   }
   function recordBody(value) {
-    return Object.fromEntries(Object.entries(payload(value)).map(([key, val]) => [FIELDS[key], val]));
+    const normalized = payload(value);
+    return { ...Object.fromEntries(Object.entries(FIELDS).map(([key, field]) => [field, normalized[key]])),
+      'pmdh_ResponsiblePerson@odata.bind': normalized.responsiblePersonId ? `/pmdh_people(${normalized.responsiblePersonId})` : null };
   }
   function version(etag) {
     const match = /^W\/"(\d+)"$/.exec(etag || '');
     if (!match) throw new Error('Record concurrency token missing or invalid. Reload before editing.');
     return match[1];
   }
-  const api = { KINDS, FIELDS, validate, payload, batch, checkBatch, recordPayload, recordBody, version };
+  const api = { KINDS, STATUSES, FIELDS, validate, payload, batch, checkBatch, recordPayload, recordBody, version };
   if (typeof module !== 'undefined') module.exports = api;
   else root.PMDH = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

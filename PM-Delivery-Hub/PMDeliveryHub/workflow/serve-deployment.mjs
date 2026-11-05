@@ -2,15 +2,16 @@ import http from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { tables, lookups, relationship, keys } from './schema.mjs';
-const files = ['core.js', 'review.js', 'review.html'];
+const files = ['core.js', 'review.js', 'review.html', 'reporting.js', 'dashboard.js', 'dashboard.html'];
 async function payload() {
   const resources = await Promise.all(files.map(async name => ({
-    name: name === 'review.html' ? 'pmdh_review.html' : `pmdh_${name}`,
+    name: `pmdh_${name}`,
     type: name.endsWith('.html') ? 1 : 3,
     content: (await readFile(new URL(name, import.meta.url))).toString('base64')
   })));
   const assembly = await readFile(new URL('ApprovalGuard/bin/Release/net462/PMDeliveryHub.ApprovalGuard.dll', import.meta.url));
-  return { tables, relationships: lookups.map(relationship), keys, resources, assembly: assembly.toString('base64') };
+  return { tables, relationships: lookups.map(relationship), keys, resources, assembly: assembly.toString('base64'),
+    deploy: await readFile(new URL('deploy-dashboard.js', import.meta.url), 'utf8') };
 }
 const server = http.createServer(async (request, response) => {
   if (request.url !== '/deployment' || request.method !== 'GET') { response.writeHead(404).end(); return; }

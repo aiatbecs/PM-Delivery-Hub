@@ -21,12 +21,19 @@ const date = (name, title, dateOnly = false) => ({
 });
 const table = (name, title, plural, attributes) => ({
   '@odata.type': 'Microsoft.Dynamics.CRM.EntityMetadata', SchemaName: `pmdh_${name}`,
+  ...(name === 'Person' ? { EntitySetName: 'pmdh_people' } : {}),
   DisplayName: label(title), DisplayCollectionName: label(plural), Description: label(`PM Delivery Hub ${title}`),
   OwnershipType: 'UserOwned', IsActivity: false, HasActivities: false, HasNotes: false,
   IsAuditEnabled: { Value: true }, IsOptimisticConcurrencyEnabled: true,
   Attributes: [{ ...text('Name', 'Title', 200, true), IsPrimaryName: true }, ...attributes]
 });
 export const tables = [
+  table('Person', 'Delivery Person', 'Delivery People', [
+    text('DirectoryKey', 'Directory Key', 100, true), text('Email', 'Work Email', 200)
+  ]),
+  table('ProjectMember', 'Project Member', 'Project Members', [
+    text('Role', 'Project Role', 100, true)
+  ]),
   table('Meeting', 'Meeting', 'Meetings', [
     date('MeetingDate', 'Meeting Date'), memo('Transcript', 'Transcript', 100000),
     memo('Attendees', 'Attendees', 4000), memo('Summary', 'Approved Summary', 10000),
@@ -66,7 +73,15 @@ export const tables = [
 export const lookups = [];
 for (const t of tables) {
   const name = t.SchemaName.toLowerCase();
+  if (name === 'pmdh_person') {
+    lookups.push({ table: name, column: 'User', target: 'systemuser', mandatory: false });
+    continue;
+  }
   lookups.push({ table: name, column: 'Project', target: 'pmdh_project', mandatory: true });
+  if (name === 'pmdh_projectmember') {
+    lookups.push({ table: name, column: 'Person', target: 'pmdh_person', mandatory: true });
+    continue;
+  }
   if (name !== 'pmdh_meeting') lookups.push({ table: name, column: 'Meeting', target: 'pmdh_meeting', mandatory: name !== 'pmdh_recordchange' });
   if (name === 'pmdh_recordchange') {
     lookups.push({ table: name, column: 'Proposal', target: 'pmdh_proposal', mandatory: false });
@@ -77,10 +92,12 @@ for (const t of tables) {
     lookups.push({ table: name, column: 'ReviewedBy', target: 'systemuser', mandatory: false });
   }
   if (['pmdh_action', 'pmdh_risk', 'pmdh_issue', 'pmdh_dependency'].includes(name)) {
+    lookups.push({ table: name, column: 'ResponsiblePerson', target: 'pmdh_person', mandatory: false });
     lookups.push({ table: name, column: 'Evidence', target: 'pmdh_evidence', mandatory: true });
     lookups.push({ table: name, column: 'Proposal', target: 'pmdh_proposal', mandatory: true });
   }
 }
+lookups.push({ table: 'pmdh_project', column: 'DeliveryTeam', target: 'team', mandatory: false });
 export function relationship(l) {
   return {
     '@odata.type': 'Microsoft.Dynamics.CRM.OneToManyRelationshipMetadata',
@@ -94,6 +111,9 @@ export function relationship(l) {
   };
 }
 export const keys = [
+  { table: 'pmdh_person', name: 'PersonDirectory', fields: ['pmdh_directorykey'] },
+  { table: 'pmdh_person', name: 'PersonUser', fields: ['pmdh_user'] },
+  { table: 'pmdh_projectmember', name: 'ProjectPerson', fields: ['pmdh_project', 'pmdh_person'] },
   { table: 'pmdh_meeting', name: 'MeetingSource', fields: ['pmdh_project', 'pmdh_sourcekey'] },
   { table: 'pmdh_proposal', name: 'MeetingCandidate', fields: ['pmdh_meeting', 'pmdh_candidatekey'] }
 ];

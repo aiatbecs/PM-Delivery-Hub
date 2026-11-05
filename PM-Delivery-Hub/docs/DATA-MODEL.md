@@ -19,8 +19,8 @@ The MVP covers project context and the meeting-to-reviewed-updates workflow. Tab
 - The basic PM Delivery Hub model-driven app has been saved and published inside the solution, with Delivery > Projects navigation.
 - Active Projects has been saved and published with Project Name, Created On, Project Number, Customer, Project Manager, Stage, Health, account_id, TPID, Wave_id, and Target End Date. Its Active-status filter is unchanged; custom Stage does not change Dataverse status.
 - Meeting, Evidence, Proposal, Action, Risk, Issue, and Dependency have been created as standard user/team-owned tables. See the implemented workflow schema below; the later target design is not the exact deployed schema.
-- SharePoint Location and other target tables have not been created. Project-team access enforcement is still pending.
-- Access is intended for the assigned PM and project team, with portfolio administrators seeing all projects. Ownership alone does not enforce this: security roles and team/sharing behavior still need implementation and testing.
+- SharePoint Location and other target tables have not been created. The reporting increment adds people, memberships, native project owner teams and PMDH security roles.
+- Member roles restrict project rows to their owner teams; management roles permit portfolio access. Native team effective-access checks passed. Separate-user sign-in and review of additive roles/shares remain required before sharing.
 - The environment solution has been exported and unpacked into the local solution source. Local repacking passed; importing into another environment has not been tested. The solution backup does not include the synthetic project row or other business data.
 
 ### Basic app validation
@@ -47,7 +47,7 @@ The MVP covers project context and the meeting-to-reviewed-updates workflow. Tab
 
 ### Implemented meeting workflow schema
 
-All seven new tables have required primary name `pmdh_name` (200 characters). All have required Project lookups; all except Meeting also have required Meeting lookups. Proposal and RAID records require Evidence; RAID records also require Proposal. Lookup deletion is restricted and ownership/share cascades are disabled. Row ownership does not automatically follow Project ownership.
+The initial seven workflow tables have required primary name `pmdh_name` (200 characters). All have required Project lookups; all except Meeting also have required Meeting lookups. Proposal and RAID records require Evidence; RAID records also require Proposal. Lookup deletion is restricted and ownership/share cascades are disabled. The reporting increment uses a synchronous plugin to set new workflow ownership to the project's owner team.
 
 | Table | Deployed content |
 |---|---|
@@ -62,9 +62,18 @@ The active alternate keys are `pmdh_MeetingSource` (Project + SourceKey) and `pm
 
 - Proposal adds TargetRecordId (36), TargetVersion (30), BeforePayload (50,000-character memo), and SourceCandidates (4,000-character memo containing consolidated summary proposal IDs). Blank target means Create new. A populated target must identify a same-project record whose type matches the proposal. BeforePayload is captured server-side.
 - Each RAID table adds LastReviewId (36) for the most recent reviewed application. Original Project/Meeting/Evidence/Proposal links remain immutable; reviewed updates retain the official record's original GUID.
-- `pmdh_recordchange` is a user/team-owned history table: required Project, RecordId (36), Kind and ChangeType (100 each), before/after JSON memos (50,000 each), server ChangedBy/ChangedOn, optional Meeting and Proposal links. Synchronous PostOperation steps write creation, reviewed-update, and manual-edit history in the same transaction. Direct history Create/Update/Delete is blocked; nested creation must match the current record/project.
-- History begins with this increment, not retrospectively. RecordId is text so history can retain the identifier if an official record is removed. Configure environment auditing separately for full security/retention requirements.
+- `pmdh_recordchange` is a user/team-owned history table: required Project, RecordId (36), Kind and ChangeType (100 each), before/after JSON memos (50,000 each), server ChangedBy/ChangedOn, optional Meeting and Proposal links. Synchronous PostOperation steps write creation, reviewed-update, and manual-edit history in the same transaction. Direct business history Create/Update/Delete is blocked; nested creation must match the current record/project.
+- History begins with this increment, not retrospectively. Configure environment auditing separately for full security/retention requirements.
 - New-record approval AppliedId is the proposal GUID. Update approval AppliedId is the existing official record GUID. Target version and If-Match protect stale reviewed updates; original and subsequent proposals remain separate immutable reviews.
+
+#### Reporting and access increment (`1.0.0.5`)
+
+- `pmdh_person` adds name, stable DirectoryKey (required 100), optional Email (200), and optional User lookup. Entity set is `pmdh_people`. Unique keys enforce DirectoryKey and non-null User identity.
+- `pmdh_projectmember` adds required Project, Person and descriptive Role (100). Project + Person is unique. Linked User accounts are synchronized with the native project owner team; external people do not receive account access.
+- Project adds a server-managed DeliveryTeam lookup. Projects and their workflow/membership/history rows belong to that owner team.
+- Each RAID table adds ResponsiblePerson. The optional responsiblePersonId payload field is explicitly chosen in review, matched at application and included in history. ResponsibleParty source text remains separate.
+- Status remains a text column for compatibility, but UI/server validation now enforces Open, In progress, Blocked, Monitoring, Closed, Resolved or Cancelled.
+- PMDH Project Member and PMDH Management roles provide native team-scoped and portfolio-wide access respectively. See [REPORTING-ACCESS.md](REPORTING-ACCESS.md) for deployment and security acceptance requirements.
 
 This first increment deliberately uses optional transcript text in Dataverse and text responsible-party/status/probability fields rather than SharePoint URLs, user assignment, and agreed choice scales. Originals and screenshots remain in approved external storage; do not use customer data until storage, retention, auditing, and access are approved. Table audit flags do not enable environment auditing.
 

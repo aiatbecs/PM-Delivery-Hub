@@ -26,6 +26,19 @@ namespace PMDeliveryHub
             var factory = (IOrganizationServiceFactory)provider.GetService(typeof(IOrganizationServiceFactory));
             var service = factory.CreateOrganizationService(context.UserId);
             trace.Trace("PMDH guard: {0} {1} stage {2}", context.MessageName, context.PrimaryEntityName, context.Stage);
+            if (context.Stage == 20 && context.MessageName == "Update" &&
+                context.InputParameters["Target"] is Entity ownership && ownership.Contains("ownerid") &&
+                ownership.Attributes.Keys.All(k => new[] { "ownerid", ownership.LogicalName + "id", "owningbusinessunit",
+                    "modifiedon", "modifiedby", "modifiedonbehalfby" }.Contains(k)))
+            {
+                var row = service.Retrieve(ownership.LogicalName, ownership.Id, new ColumnSet("pmdh_project"));
+                var projectTeam = service.Retrieve("pmdh_project", Reference(row, "pmdh_project", "pmdh_project").Id,
+                    new ColumnSet("pmdh_deliveryteam")).GetAttributeValue<EntityReference>("pmdh_deliveryteam");
+                if (projectTeam == null || ownership.GetAttributeValue<EntityReference>("ownerid")?.Id != projectTeam.Id ||
+                    !DeliveryGuard.IsManager(service, context.InitiatingUserId))
+                    throw new InvalidPluginExecutionException("Only management may migrate ownership to the project's security team.");
+                return;
+            }
             if (context.PrimaryEntityName == "pmdh_recordchange")
             {
                 if (context.MessageName != "Create" || context.Depth < 2 || !context.IsInTransaction)
@@ -128,7 +141,17 @@ namespace PMDeliveryHub
                 if ((current.GetAttributeValue<OptionSetValue>("pmdh_reviewstatus")?.Value ?? Pending) != Pending)
                     throw new InvalidPluginExecutionException("Reviewed proposals are immutable. Submit a new candidate for changes.");
             }
-            ValidatePayload(combined);
+            var payload = ValidatePayload(combined);
+            var personId = Read(payload, "responsiblePersonId");
+            if (state != Pending + 3 && personId.Length != 0)
+            {
+                if (kind == 0) throw new InvalidPluginExecutionException("Summaries cannot assign a delivery person.");
+                var member = new QueryExpression("pmdh_projectmember") { ColumnSet = new ColumnSet(false), TopCount = 1 };
+                member.Criteria.AddCondition("pmdh_project", ConditionOperator.Equal, project.Id);
+                member.Criteria.AddCondition("pmdh_person", ConditionOperator.Equal, Guid.Parse(personId));
+                if (service.RetrieveMultiple(member).Entities.Count != 1)
+                    throw new InvalidPluginExecutionException("Responsible person must belong to this project.");
+            }
             if (state < Pending || state > Pending + 3) throw new InvalidPluginExecutionException("Invalid proposal review status.");
             var sourceIds = combined.GetAttributeValue<string>("pmdh_sourcecandidates");
             if (context.MessageName == "Create" && !string.IsNullOrEmpty(sourceIds))
@@ -301,19 +324,26 @@ namespace PMDeliveryHub
             Dictionary<string, object> data;
             try { data = new JavaScriptSerializer().Deserialize<Dictionary<string, object>>(proposal.GetAttributeValue<string>("pmdh_payload") ?? ""); }
             catch (ArgumentException) { throw new InvalidPluginExecutionException("Proposal payload must be valid JSON."); }
-            var allowed = Fields.Values.Concat(new[] { "dueDate" }).ToArray();
+            var allowed = Fields.Values.Concat(new[] { "dueDate", "responsiblePersonId" }).ToArray();
             if (data == null || data.Keys.Any(k => !allowed.Contains(k)) || string.IsNullOrWhiteSpace(Read(data, "title")) ||
                 string.IsNullOrWhiteSpace(Read(data, "description"))) throw new InvalidPluginExecutionException("Invalid proposal payload fields.");
             foreach (var pair in new Dictionary<string, int> { { "title", 200 }, { "description", 10000 }, { "responsibleParty", 200 },
                 { "impact", 4000 }, { "response", 4000 }, { "probability", 100 }, { "dueDate", 10 }, { "status", 100 } })
                 if (Read(data, pair.Key).Length > pair.Value) throw new InvalidPluginExecutionException("Proposal field exceeds maximum length: " + pair.Key);
             var due = Read(data, "dueDate");
+            if (!new[] { "Open", "In progress", "Blocked", "Monitoring", "Closed", "Resolved", "Cancelled" }.Contains(Read(data, "status")))
+                throw new InvalidPluginExecutionException("Select a supported delivery status.");
+            var person = Read(data, "responsiblePersonId");
+            if (person.Length != 0 && !Guid.TryParse(person, out _))
+                throw new InvalidPluginExecutionException("Responsible person must be a valid directory ID.");
             if (due.Length != 0 && !DateTime.TryParseExact(due, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
                 throw new InvalidPluginExecutionException("Proposal dueDate must be a real YYYY-MM-DD date.");
             return data;
         }
         private static void MatchContent(Entity record, Dictionary<string, object> data)
         {
+            if ((record.GetAttributeValue<EntityReference>("pmdh_responsibleperson")?.Id.ToString() ?? "") != Read(data, "responsiblePersonId"))
+                throw new InvalidPluginExecutionException("Responsible person must match the approved proposal.");
             foreach (var pair in Fields)
                 if ((record.GetAttributeValue<string>(pair.Key) ?? (pair.Key == "pmdh_status" ? "Open" : "")) != Read(data, pair.Value))
                     throw new InvalidPluginExecutionException("Official content must match the approved proposal: " + pair.Key);
@@ -326,6 +356,7 @@ namespace PMDeliveryHub
         {
             var values = Fields.ToDictionary(p => p.Value, p => (object)(row.GetAttributeValue<string>(p.Key) ?? (p.Key == "pmdh_status" ? "Open" : "")));
             values["dueDate"] = row.GetAttributeValue<DateTime?>("pmdh_duedate")?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            values["responsiblePersonId"] = row.GetAttributeValue<EntityReference>("pmdh_responsibleperson")?.Id.ToString() ?? "";
             return new JavaScriptSerializer().Serialize(values);
         }
     }

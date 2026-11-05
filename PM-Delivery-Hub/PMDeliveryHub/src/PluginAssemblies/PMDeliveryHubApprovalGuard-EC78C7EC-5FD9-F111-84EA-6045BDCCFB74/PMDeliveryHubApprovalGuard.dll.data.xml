@@ -8,5 +8,8 @@
     <PluginType AssemblyQualifiedName="PMDeliveryHub.ApprovalGuard, PMDeliveryHub.ApprovalGuard, Version=1.0.0.0, Culture=neutral, PublicKeyToken=0dd892a5c8f545ca" PluginTypeId="635365f5-5fd9-f111-84ea-6045bdccfb74" Name="PMDeliveryHub.ApprovalGuard">
       <FriendlyName>PM Delivery Hub approval and provenance guard</FriendlyName>
     </PluginType>
+    <PluginType AssemblyQualifiedName="PMDeliveryHub.DeliveryGuard, PMDeliveryHub.ApprovalGuard, Version=1.0.0.0, Culture=neutral, PublicKeyToken=0dd892a5c8f545ca" PluginTypeId="09eb275f-70d9-f111-84ea-6045bdccfb74" Name="PMDeliveryHub.DeliveryGuard">
+      <FriendlyName>PM Delivery Hub people and ownership guard</FriendlyName>
+    </PluginType>
   </PluginTypes>
 </PluginAssembly>

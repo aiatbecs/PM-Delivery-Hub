@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Role id="{9bd86a00-70d9-f111-84ea-6045bdccfb74}" name="PMDH Project Member" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <IsCustomizable>1</IsCustomizable>
+  <IsAutoAssigned>0</IsAutoAssigned>
+  <RolePrivileges>
+    <RolePrivilege name="prvAppendpmdh_Action" level="Basic" />
+    <RolePrivilege name="prvAppendpmdh_Dependency" level="Basic" />
+    <RolePrivilege name="prvAppendpmdh_Evidence" level="Basic" />
+    <RolePrivilege name="prvAppendpmdh_Issue" level="Basic" />
+    <RolePrivilege name="prvAppendpmdh_Meeting" level="Basic" />
+    <RolePrivilege name="prvAppendpmdh_Project" level="Basic" />
+    <RolePrivilege name="prvAppendpmdh_Proposal" level="Basic" />
+    <RolePrivilege name="prvAppendpmdh_RecordChange" level="Basic" />
+    <RolePrivilege name="prvAppendpmdh_Risk" level="Basic" />
+    <RolePrivilege name="prvAppendTopmdh_Action" level="Basic" />
+    <RolePrivilege name="prvAppendTopmdh_Dependency" level="Basic" />
+    <RolePrivilege name="prvAppendTopmdh_Evidence" level="Basic" />
+    <RolePrivilege name="prvAppendTopmdh_Issue" level="Basic" />
+    <RolePrivilege name="prvAppendTopmdh_Meeting" level="Basic" />
+    <RolePrivilege name="prvAppendTopmdh_Person" level="Global" />
+    <RolePrivilege name="prvAppendTopmdh_Project" level="Basic" />
+    <RolePrivilege name="prvAppendTopmdh_Proposal" level="Basic" />
+    <RolePrivilege name="prvAppendTopmdh_RecordChange" level="Basic" />
+    <RolePrivilege name="prvAppendTopmdh_Risk" level="Basic" />
+    <RolePrivilege name="prvAppendToUser" level="Global" />
+    <RolePrivilege name="prvAssignpmdh_Action" level="Basic" />
+    <RolePrivilege name="prvAssignpmdh_Dependency" level="Basic" />
+    <RolePrivilege name="prvAssignpmdh_Evidence" level="Basic" />
+    <RolePrivilege name="prvAssignpmdh_Issue" level="Basic" />
+    <RolePrivilege name="prvAssignpmdh_Meeting" level="Basic" />
+    <RolePrivilege name="prvAssignpmdh_Project" level="Basic" />
+    <RolePrivilege name="prvAssignpmdh_Proposal" level="Basic" />
+    <RolePrivilege name="prvAssignpmdh_RecordChange" level="Basic" />
+    <RolePrivilege name="prvAssignpmdh_Risk" level="Basic" />
+    <RolePrivilege name="prvCreatepmdh_Action" level="Basic" />
+    <RolePrivilege name="prvCreatepmdh_Dependency" level="Basic" />
+    <RolePrivilege name="prvCreatepmdh_Evidence" level="Basic" />
+    <RolePrivilege name="prvCreatepmdh_Issue" level="Basic" />
+    <RolePrivilege name="prvCreatepmdh_Meeting" level="Basic" />
+    <RolePrivilege name="prvCreatepmdh_Proposal" level="Basic" />
+    <RolePrivilege name="prvCreatepmdh_RecordChange" level="Basic" />
+    <RolePrivilege name="prvCreatepmdh_Risk" level="Basic" />
+    <RolePrivilege name="prvCreateSharePointData" level="Global" />
+    <RolePrivilege name="prvReadAppModule" level="Global" />
+    <RolePrivilege name="prvReadPluginAssembly" level="Global" />
+    <RolePrivilege name="prvReadPluginType" level="Global" />
+    <RolePrivilege name="prvReadpmdh_Action" level="Basic" />
+    <RolePrivilege name="prvReadpmdh_Dependency" level="Basic" />
+    <RolePrivilege name="prvReadpmdh_Evidence" level="Basic" />
+    <RolePrivilege name="prvReadpmdh_Issue" level="Basic" />
+    <RolePrivilege name="prvReadpmdh_Meeting" level="Basic" />
+    <RolePrivilege name="prvReadpmdh_Person" level="Global" />
+    <RolePrivilege name="prvReadpmdh_Project" level="Basic" />
+    <RolePrivilege name="prvReadpmdh_ProjectMember" level="Basic" />
+    <RolePrivilege name="prvReadpmdh_Proposal" level="Basic" />
+    <RolePrivilege name="prvReadpmdh_RecordChange" level="Basic" />
+    <RolePrivilege name="prvReadpmdh_Risk" level="Basic" />
+    <RolePrivilege name="prvReadRole" level="Global" />
+    <RolePrivilege name="prvReadSdkMessage" level="Global" />
+    <RolePrivilege name="prvReadSdkMessageProcessingStep" level="Global" />
+    <RolePrivilege name="prvReadSdkMessageProcessingStepImage" level="Global" />
+    <RolePrivilege name="prvReadSharePointData" level="Global" />
+    <RolePrivilege name="prvReadSharePointDocument" level="Global" />
+    <RolePrivilege name="prvReadUser" level="Local" />
+    <RolePrivilege name="prvReadWebResource" level="Global" />
+    <RolePrivilege name="prvWritepmdh_Action" level="Basic" />
+    <RolePrivilege name="prvWritepmdh_Dependency" level="Basic" />
+    <RolePrivilege name="prvWritepmdh_Evidence" level="Basic" />
+    <RolePrivilege name="prvWritepmdh_Issue" level="Basic" />
+    <RolePrivilege name="prvWritepmdh_Meeting" level="Basic" />
+    <RolePrivilege name="prvWritepmdh_Project" level="Basic" />
+    <RolePrivilege name="prvWritepmdh_Proposal" level="Basic" />
+    <RolePrivilege name="prvWritepmdh_RecordChange" level="Basic" />
+    <RolePrivilege name="prvWritepmdh_Risk" level="Basic" />
+    <RolePrivilege name="prvWriteSharePointData" level="Global" />
+  </RolePrivileges>
+</Role>

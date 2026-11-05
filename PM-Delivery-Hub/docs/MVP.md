@@ -14,7 +14,9 @@ The Project app and manual-Copilot review workflow are deployed. Supported propo
 
 This is an increment toward the acceptance criteria below, not completion of the entire MVP. Stakeholders, decisions, prerequisites, scope changes, SharePoint artifact registration, integrated AI, and tested project-team permissions remain outstanding. See [MEETING-WORKFLOW.md](MEETING-WORKFLOW.md) for current behavior and synthetic validation.
 
-Milestone `1.0.0.4` adds explicit matching to an existing same-project/same-type RAID record, reviewed updates without duplicates, operational record editing, before/after change history, stale-update rejection, and summary consolidation/replacement confirmation. Automatic/fuzzy matching, corporate templates, project-team authorization, and SharePoint outputs remain outstanding.
+Milestone `1.0.0.4` adds explicit matching to an existing same-project/same-type RAID record, reviewed updates without duplicates, operational record editing, before/after change history, stale-update rejection, and summary consolidation/replacement confirmation. Automatic/fuzzy matching, corporate templates, and SharePoint outputs remain outstanding.
+
+Milestone `1.0.0.5` adds people/project memberships, explicit responsible-person assignments, project/owner/My items dashboards, and native Dataverse team/role access. Production access acceptance still requires separate member/manager sign-ins and auditing existing additive grants. See [REPORTING-ACCESS.md](REPORTING-ACCESS.md).
 
 ## Initial records
 
@@ -63,7 +65,7 @@ Use Dataverse relationships to connect each record to its project and, where app
 - Automatic ingestion of Teams transcripts, Outlook threads, or SharePoint files
 - Automatic email sending or automatic approval of AI-proposed changes
 - Status/FDO reports, kickoff packs, handover/closure documents, and lessons learned
-- Azure DevOps synchronization and portfolio dashboards
+- Azure DevOps synchronization and advanced Power BI portfolio reporting
 - Custom Azure AI services, unless Copilot Studio and approved Microsoft 365 capabilities cannot meet validated requirements
 
 ## Decisions required before environment implementation
